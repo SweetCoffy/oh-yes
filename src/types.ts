@@ -7,8 +7,9 @@ interface CommandBaseArg {
 }
 type CommandStringArg = CommandBaseArg & { type: "string" }
 type CommandNumberArg = CommandBaseArg & { type: "number" }
+type CommandUserArg = CommandBaseArg & { type: "user", errorIfMissing?: boolean }
 type RestArg = CommandBaseArg & { name: `...${string}`, minCount?: number, maxCount?: number }
-export type CommandArgTypes = CommandStringArg | CommandNumberArg
+export type CommandArgTypes = CommandStringArg | CommandNumberArg | CommandUserArg
 export type CommandArg = (CommandArgTypes & RestArg) | CommandArgTypes
 export interface Command {
     name: string,

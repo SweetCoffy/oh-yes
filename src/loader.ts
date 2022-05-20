@@ -7,7 +7,6 @@ import { Command } from "./types"
 const BuildPath = "build"
 export const commands: Collection<string, Command> = new Collection();
 export const lookup: Collection<string, string> = new Collection();
-
 export async function loadFile(file: string): Promise<unknown> {
     // var cont = await readFile(join(BuildPath, file), "utf8")
     // var url = `data:text/javascript;base64,${btoa(cont)}`

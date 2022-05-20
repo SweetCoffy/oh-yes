@@ -1,5 +1,6 @@
 import { commands, lookup } from "../loader.js";
 import { Command, CommandArg } from "../types";
+import { Client } from "discord.js"
 
 const Quotes = new Set(["\"", "\'"])
 
@@ -50,13 +51,19 @@ function parseArgs(args: string[], cmdArgs: CommandArg[]): unknown[] {
     for (var i = 0; i < args.length; i++) {
         var v = args[i]
         var arg = cmdArgs[Math.min(i, cmdArgs.length - 1)]
-
+        console.log(`#${i} ${v}`)
         var value: any = v + ""
         if (arg.type == "number") value = Number(v)
+        else if (arg.type == "user") {
+            var regex = /^<@!?(\d+)>/g
+            var matches = regex.exec(v)
+            console.log(matches)
+            value = matches?.[1] || v
+        }
         if (arg.name.startsWith("...")) {
             hasRest = true
             rest.push(value)
-        } else ar.push(v);
+        } else ar.push(value);
     }
     if (hasRest) ar.push(rest)
     return ar
@@ -72,7 +79,28 @@ function parseCommand(str: string): { command: Command, args: unknown[] } | null
 
     return { command: cmd, args: parseArgs(args, cmd.args) }
 }
+async function convertArgs(args: any[], cmdArgs: CommandArg[], client: Client): Promise<any[]> {
+    async function convert(v: any, arg: CommandArg) {
+        if (arg.type == "user") {
+            try {
+                return await client.users.fetch(v)
+            } catch (err) {
+                if (arg.errorIfMissing) throw err
+                return null
+            }
+        }
+        return v;
+    }
+    return await Promise.all(args.map(async (value, i) => {
+        var arg = cmdArgs[i]
+        if (Array.isArray(value)) {
+            return await Promise.all(value.map(el => convert(el, arg)))
+        }
+        return await convert(value, arg)
+    }))
+}
 export default {
     parseCommand,
     lexer,
+    convertArgs,
 }
