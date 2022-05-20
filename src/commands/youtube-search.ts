@@ -6,6 +6,7 @@ export default {
     description: "suspicious activity",
     args: [{ name: "...terms", type: "string", required: true, minCount: 1 }],
     async run(msg, terms: string[]) {
+        await msg.react('🔍')
         var query = terms.join(" ")
         if (!query) return await msg.reply("Can't search for nothing")
         var results = await search(query)

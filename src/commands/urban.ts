@@ -19,7 +19,8 @@ export default {
             type: "string",
             required: true,
         }],
-    async run(message, term: string) {
+    async run(msg, term: string) {
+        await msg.react('🔍')
         var regex = /\[(.+?)\]/g
         function uFormat(str: string) {
             return str.replace(regex, (sub, term: string) => {
@@ -64,9 +65,9 @@ export default {
                 embed3.fields = embed.fields;
                 embed.fields = [];
             }
-            await message.channel.send({ embeds: [embed] })
-            if (d.length > 2048) await message.channel.send({ embeds: [embed3] })
-            if (e) await message.channel.send({ embeds: [embed2] })
+            await msg.channel.send({ embeds: [embed] })
+            if (d.length > 2048) await msg.channel.send({ embeds: [embed3] })
+            if (e) await msg.channel.send({ embeds: [embed2] })
         } catch (err) {
             console.error(err)
         }
