@@ -4,7 +4,7 @@ export default {
     name: "ping",
     aliases: ["pong"],
     description: "Ping",
-    args: [],
+    args: [{ type: "string", name: "...args", required: true }],
     async run(msg) {
         var start = Date.now()
         var m = await msg.reply("a")

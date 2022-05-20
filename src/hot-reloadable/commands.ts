@@ -1,9 +1,44 @@
 import { commands, lookup } from "../loader.js";
 import { Command, CommandArg } from "../types";
-import shlex from "shlex"
 
+const Quotes = new Set(["\"", "\'"])
+
+// No more shlex, get real
 function lexer(str: string) {
-    return shlex.split(str)
+    //return shlex.split(str)
+    var args: string[] = []
+    var acc = ""
+    var quote = ""
+    function resetAcc() {
+        if (acc) args.push(acc)
+        acc = ""
+    }
+    for (var i = 0; i < str.length; i++) {
+        var char = str[i]
+        if (char == "\\") {
+            acc += str[i + 1]
+            continue
+        }
+        if (!quote) {
+            if (Quotes.has(char)) {
+                quote = char
+                continue
+            }
+            if (char == " ") {
+                resetAcc()
+                continue
+            }
+            acc += char
+        } else {
+            if (Quotes.has(char)) {
+                quote = ""
+                continue
+            }
+            acc += char
+        }
+    }
+    resetAcc()
+    return args
 }
 
 function parseArgs(args: string[], cmdArgs: CommandArg[]): unknown[] {
@@ -39,4 +74,5 @@ function parseCommand(str: string): { command: Command, args: unknown[] } | null
 }
 export default {
     parseCommand,
+    lexer,
 }

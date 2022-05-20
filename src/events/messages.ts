@@ -13,6 +13,7 @@ export default [
                 var d = parseCommand(msg.content.slice(prefix.length))
                 if (!d) return msg.reply(`Bruh`)
                 var { command: cmd, args } = d
+                console.log(args)
                 await cmd.run(msg, ...args)
             }
         } catch (err) {
