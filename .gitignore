@@ -107,3 +107,4 @@ dist
 .token
 
 build/
+data/

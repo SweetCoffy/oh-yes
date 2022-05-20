@@ -31,7 +31,10 @@ export async function loadCommands(client: Client, ...files: string[]) {
         hidden: true,
         args: [],
         async run(msg) {
-            var m = await msg.reply("Reloading...")
+            var { saveAllUsers } = getHotReloadable().eco
+            var m = await msg.reply("Saving users...")
+            await saveAllUsers()
+            await m.edit("Getting real...")
             await loadAll(msg.client);
             await m.edit("Reloaded commands & events")
         }

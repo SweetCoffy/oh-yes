@@ -1,4 +1,4 @@
-import { Message } from "discord.js"
+import { Message, User } from "discord.js"
 
 interface CommandBaseArg {
     type: string,
@@ -19,4 +19,12 @@ export interface Command {
     devOnly?: boolean,
     hidden?: boolean,
     run: (msg: Message, ...args: unknown[]) => Promise<any>
+}
+export interface UserData {
+    money: Money,
+    multipliers: number[],
+}
+export type CurrencyID = "points" | "gold"
+export type Money = {
+    [x in CurrencyID]: number
 }
