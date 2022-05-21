@@ -2,6 +2,7 @@ import { Client, Collection } from "discord.js"
 import { readdir, readFile } from "fs/promises"
 import { join } from "path"
 import hotReloadable from "./hot-reloadable"
+import { reloadWorkers } from "./workers.js"
 import { Command } from "./types"
 
 const BuildPath = "build"
@@ -68,6 +69,7 @@ export async function loadEvents(client: Client, ...files: string[]) {
 }
 
 export async function loadAll(client: Client) {
+    reloadWorkers()
     // hot reloadable must be loaded before everything else because reasons
     var hr = await loadFile("hot-reloadable.js") as any
     if ("loadfiles" in hr) {

@@ -18,7 +18,8 @@ export interface Command {
     args: CommandArg[],
     devOnly?: boolean,
     hidden?: boolean,
-    run: (msg: Message, ...args: unknown[]) => Promise<any>
+    run: (msg: Message, ...args: unknown[]) => Promise<any>,
+    lexer?: boolean,
 }
 export interface UserData {
     money: Money,

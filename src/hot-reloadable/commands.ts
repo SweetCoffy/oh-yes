@@ -69,11 +69,13 @@ function parseArgs(args: string[], cmdArgs: CommandArg[]): unknown[] {
     return ar
 }
 function parseCommand(str: string): { command: Command, args: unknown[] } | null {
-    var args = lexer(str)
-    var name = args.shift()
+    var space = str.split(" ")
+    var name = space.shift()
+    var args = lexer(space.join(" "))
     if (!name) return null;
     if (!lookup.has(name)) return null;
     var cmd = commands.get(lookup.get(name) as string) as Command
+    if (cmd.lexer == false) args = space
     var required = cmd.args.reduce((prev, cur) => prev + ((cur.required && !cur.name.startsWith("...")) as unknown as number), 0)
     if (args.length < required) return null;
 
