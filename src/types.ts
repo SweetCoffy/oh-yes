@@ -8,8 +8,9 @@ interface CommandBaseArg {
 type CommandStringArg = CommandBaseArg & { type: "string" }
 type CommandNumberArg = CommandBaseArg & { type: "number" }
 type CommandUserArg = CommandBaseArg & { type: "user", errorIfMissing?: boolean }
+type CommandBigintArg = CommandBaseArg & { type: "bigint" }
 type RestArg = CommandBaseArg & { name: `...${string}`, minCount?: number, maxCount?: number }
-export type CommandArgTypes = CommandStringArg | CommandNumberArg | CommandUserArg
+export type CommandArgTypes = CommandStringArg | CommandNumberArg | CommandUserArg | CommandBigintArg
 export type CommandArg = (CommandArgTypes & RestArg) | CommandArgTypes
 export interface Command {
     name: string,
@@ -23,9 +24,11 @@ export interface Command {
 }
 export interface UserData {
     money: Money,
-    multipliers: number[],
+    multipliers: bigint[],
+    items: { [x: string]: bigint | undefined },
 }
 export type CurrencyID = "points" | "gold"
 export type Money = {
-    [x in CurrencyID]: number
+    [x in CurrencyID]: bigint
 }
+export type OptionalMoney = { [x in CurrencyID]?: bigint }

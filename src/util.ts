@@ -1,13 +1,58 @@
-import { formats } from "./formats.js";
-import { CurrencyID, Money, UserData } from "./types";
+import { formats, formatsBigint } from "./formats.js";
+import { getHotReloadable } from "./loader.js";
+import { CurrencyID, Money, OptionalMoney, UserData } from "./types";
 
 export function getMul(user: UserData) {
-    return user.multipliers.reduce((prev, cur) => prev * cur, 1)
+    return user.multipliers.reduce((prev, cur) => prev * cur, 1n)
 }
-export function allMoneyFormat(m: Money) {
-    return Object.keys(m).map(el => moneyFormat(m[el as CurrencyID], el as CurrencyID)).join(" ")
+
+
+export function allMoneyFormat(m: OptionalMoney) {
+    //@ts-ignore
+    return Object.keys(m).filter((v) => v && m[v as CurrencyID]).map(el => moneyFormat(m[el as CurrencyID], el as CurrencyID)).join(" • ")
 }
-export function format(number: number) {
+export function moneyLeft(money: Money, price: OptionalMoney): Money {
+    //@ts-ignore
+    return Object.fromEntries(Object.entries(money).map(([k, v]) => [k, v - (price[k] || 0n)]))
+}
+export function subtractMoney(money: Money, price: OptionalMoney): void {
+    for (var k in price) {
+        //@ts-ignore
+        money[k] -= price[k] || 0n
+    }
+}
+export function multiplyMoney(money: OptionalMoney, amount: bigint): OptionalMoney {
+    //@ts-ignore
+    return Object.fromEntries(Object.entries(money).filter(([k, v]) => typeof v == "bigint").map(([k, v]) => [k, v * amount]))
+}
+export function hasMoney(money: Money) {
+    return Object.values(money).every(v => v >= 0n)
+}
+
+
+export function getItem(u: UserData, id: string): bigint {
+    return u.items[id] || 0n
+}
+export function addItem(u: UserData, id: string, amt: bigint) {
+    return u.items[id] = getItem(u, id) + amt
+}
+
+
+export function abs(number: bigint | number) {
+    if (number < 0n) return -number
+    return number
+}
+export function itemString(item: string, amount?: bigint) {
+    var { items } = getHotReloadable().eco
+    var info = items.get(item)
+    if (info) {
+        if (typeof amount == "bigint" && amount != 1n) return `x${format(amount)} ${info.icon} ${info.name}`
+        return `${info.icon} ${info.name}`
+    } else {
+        return "Unknown item"
+    }
+}
+export function formatNumber(number: number) {
     var funi = null
     for (var f of formats) {
         if (Math.abs(number) >= f.min) funi = f
@@ -17,7 +62,24 @@ export function format(number: number) {
     var d = Math.floor(Math.abs((number % funi.min / funi.min) * 100))
     return `${m}.${d}${funi.suffix}`
 }
-export function moneyFormat(number: number, currency: CurrencyID = "points", message: boolean = false) {
+export function format(number: bigint) {
+    var funi = null
+    for (var f of formatsBigint) {
+        if (abs(number) >= f.min) funi = f
+    }
+    if (!funi) return `${number}`
+    var m = number / funi.min
+    var d = abs((number % funi.min) / (funi.min / 10n))
+    function yes(num: bigint) {
+        var str = num.toString()
+        var a = str.slice(0, 4)
+        var count = str.length - 4
+        return `${a}e${count}`
+    }
+    if (abs(number) > funi.min * 1000n) return `${yes(number)}`
+    return `${m}.${d}${funi.suffix}`
+}
+export function moneyFormat(number: bigint, currency: CurrencyID = "points", message: boolean = false) {
     var icon = "ᵢₚ"
     if (currency == "gold") icon = "¤"
     return icon + " " + format(number)

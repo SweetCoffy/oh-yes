@@ -38,7 +38,7 @@ export default {
             await msg.reply({
                 embeds: [{
                     title: 'List of commands',
-                    description: commands.map((v, k) => `\`${v.name}\` (${v.aliases?.map(el => `\`${el}\``) || "no aliases"})`).join("\n")
+                    description: commands.map((v, k) => `\`${v.name}\` (${v.aliases?.map(el => `\`${el}\``).join(", ") || "no aliases"})`).join("\n")
                 }]
             })
         }

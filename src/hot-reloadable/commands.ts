@@ -54,6 +54,7 @@ function parseArgs(args: string[], cmdArgs: CommandArg[]): unknown[] {
         console.log(`#${i} ${v}`)
         var value: any = v + ""
         if (arg.type == "number") value = Number(v)
+        else if (arg.type == "bigint") value = BigInt(v)
         else if (arg.type == "user") {
             var regex = /^<@!?(\d+)>/g
             var matches = regex.exec(v)
@@ -95,6 +96,7 @@ async function convertArgs(args: any[], cmdArgs: CommandArg[], client: Client): 
     }
     return await Promise.all(args.map(async (value, i) => {
         var arg = cmdArgs[i]
+        if (!arg) return value
         if (Array.isArray(value)) {
             return await Promise.all(value.map(el => convert(el, arg)))
         }
