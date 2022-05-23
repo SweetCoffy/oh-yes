@@ -5,6 +5,7 @@ import { evalWorkers } from "../workers.js"
 export default {
     name: "eval",
     description: "get real",
+    aliases: ["ev"],
     args: [{ name: "...code", required: true, type: "string" }],
     lexer: false,
     async run(msg, cod: string[]) {

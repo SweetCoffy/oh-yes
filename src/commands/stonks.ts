@@ -1,7 +1,7 @@
 import { MessageEmbed, User } from "discord.js";
 import { getHotReloadable } from "../loader.js";
 import { Command } from "../types";
-import { allMoneyFormat, getMul } from "../util.js";
+import { allMoneyFormat, format, getMul, moneyFormat } from "../util.js";
 
 export default {
     name: "stonks",
@@ -16,7 +16,10 @@ export default {
             embeds: [
                 new MessageEmbed()
                     .setAuthor({ name: u.username, iconURL: u.displayAvatarURL() })
-                    .setDescription(`Mone: ${allMoneyFormat(data.money)}\nMultiplier: ${data.multipliers.join(" * ")} (${getMul(data)})`)]
+                    .setDescription(
+                        `Mone: ${allMoneyFormat(data.money)}
+Multiplier: ${data.multipliers.join(" * ")} (${format(getMul(data))})
+Work bonus: +${format(data.workBonus)} (Maximum profit: ${allMoneyFormat({ points: (data.workBonus + 25n) * getMul(data), gold: (data.workBonus / 8n + 3n) * getMul(data) })})`)]
         })
     }
 } as Command

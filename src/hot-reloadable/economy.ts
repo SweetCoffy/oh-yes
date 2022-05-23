@@ -37,36 +37,38 @@ class ItemType {
 var users: Collection<string, UserData> = new Collection()
 var items: Collection<string, ItemType> = new Collection()
 
-items.set("spaghet", new ItemType("Spaghet", "🍝", { price: { points: 1000n, gold: 10n }, onUse: (u, a) => void addMul(u, 0, 1n * a) }))
-items.set("egg", new ItemType("Egg", "🥚", { price: { points: 1000000n, gold: 5000n } }))
-items.set("bread", new ItemType("Bread", "🍞", {
-    price: { points: 500n / 3n },
-    description: "Increases multiplier[0] by 1/10 per item (rounded down)",
-    onUse: (u, a) => void addMul(u, 0, 1n * a / 10n)
-}))
 items.set("cookie", new ItemType("Cookie", "🍪", {
     price: { points: 500n / 3n / 5n },
     description: "Increases multiplier[0] by 1/50 per item (rounded down)",
     onUse: (u, a) => void addMul(u, 0, 1n * a / 50n)
+}))
+items.set("bread", new ItemType("Bread", "🍞", {
+    price: { points: 500n / 3n },
+    description: "Increases multiplier[0] by 1/10 per item (rounded down)",
+    onUse: (u, a) => void addMul(u, 0, 1n * a / 10n)
 }))
 items.set("baguette", new ItemType("Baguette", "🥖", {
     price: { points: 500n },
     description: "Increases multiplier[0] by 1/3 per item (rounded down)",
     onUse: (u, a) => void addMul(u, 0, 1n * a / 3n)
 }))
-items.set("lottery_ticket", new ItemType("Lottery Ticket", "🎫", {
-    price: { points: 5n * 10n ** 6n, gold: 25n * 10n ** 3n },
-    description: "Has a chance to either double or cut in half your points",
-    onUse: (u, a) => {
-        if (Math.random() < 0.5 + Math.sin(Date.now()) / 10) {
-            u.money.points *= 2n
-            return [a, "Get fake"]
-        } else {
-            u.money.points /= 2n
-            return [a, "Get real"]
-        }
-    }
+
+items.set("spaghet", new ItemType("Spaghet", "🍝", {
+    price: { points: 1000n, gold: 10n },
+    onUse: (u, a) => void addMul(u, 0, 1n * a)
 }))
+items.set("moon_cake", new ItemType("Moon Cake", "🥮", {
+    price: { points: 1900n, gold: 50n },
+    onUse: (u, a) => void addMul(u, 0, 2n * a + (a / 4n))
+}))
+items.set("avocado", new ItemType("Avocado", "🥑", {
+    price: { points: 6499n },
+    onUse: (u, a) => {
+        addMul(u, 0, a * 7n + (a / 4n))
+        addMul(u, 1, a / 20n)
+    },
+}))
+
 items.set("milk", new ItemType("Milk", "🥛", {
     price: { points: 29999n },
     description: "milk gud for ur bones n ur stonks",
@@ -74,9 +76,38 @@ items.set("milk", new ItemType("Milk", "🥛", {
         addMul(u, 1, 1n * a)
     }
 }))
-items.set("avocado", new ItemType("Avocado", "🥑", {
-    price: { points: 6200n },
-    onUse: (u, a) => void addMul(u, 0, 1n + a * 6n + (a / 10n * 9n)),
+
+items.set("egg", new ItemType("Egg", "🥚", {
+    price: { points: 1000000n, gold: 5000n },
+    onUse: (u, a) => {
+        addMul(u, 1, 1n)
+        addMul(u, 2, 1n)
+    }
+}))
+
+items.set("trophy", new ItemType("Trophy", "🏆", {
+    price: { points: 500_000_000n, gold: 300_000_000n },
+    onUse: (u, a) => {
+        addMul(u, 2, 750n)
+    }
+}))
+
+items.set("car", new ItemType("Venezuela Car", "🚗", {
+    price: { points: 1_000_000_000n },
+    onUse: (u, a) => {
+        u.workBonus += a + (a / 4n)
+    }
+}))
+
+items.set("gambling_pass", new ItemType("Gambling Pass", "🎫", {
+    price: { points: 1_000_000_000_000n, gold: 750_000_000_000n }
+}))
+
+items.set("ultimate_stonks", new ItemType("Ultimate Stonks", "⚠️", {
+    price: { points: 1_000_000_000_000_000n },
+    onUse: (u, a) => {
+        return [a, "Go touch some grass"]
+    }
 }))
 
 items.sort((a, b, ak, bk) => Number(Object.values(b.price).reduce((prev, cur) => prev + cur, 0n) -
@@ -96,6 +127,7 @@ async function getUser(user: User): Promise<UserData> {
         money: { points: 3000n, gold: 150n },
         multipliers: [1n],
         items: {},
+        workBonus: 0n,
         ...o,
     }
     users.set(user.id, obj)

@@ -26,6 +26,7 @@ export interface UserData {
     money: Money,
     multipliers: bigint[],
     items: { [x: string]: bigint | undefined },
+    workBonus: bigint,
 }
 export type CurrencyID = "points" | "gold"
 export type Money = {
