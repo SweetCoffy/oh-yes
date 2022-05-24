@@ -15,12 +15,13 @@ export default {
     description: "ported from original oh yes",
     args: [
         {
-            name: "term",
+            name: "...term",
             type: "string",
             required: true,
         }],
-    async run(msg, term: string) {
+    async run(msg, terms: string[]) {
         await msg.react('🔍')
+        var term = terms.join(" ")
         var regex = /\[(.+?)\]/g
         function uFormat(str: string) {
             return str.replace(regex, (sub, term: string) => {
@@ -34,6 +35,7 @@ export default {
             var defs: UDDefinition[] = (await (await fetch(`http://api.urbandictionary.com/v0/define?term=${encodeURIComponent(term)}`)).json()).list
             //console.log(defs)
             var def = defs.sort((a: any, b: any) => b.thumbs_up - a.thumbs_up)[0]
+            if (!def) return await msg.reply("No definitions?")
             var e = uFormat(def.example)
             var d = uFormat(def.definition)
             var embed = {
