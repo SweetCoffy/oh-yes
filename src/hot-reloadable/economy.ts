@@ -85,21 +85,21 @@ items.set("egg", new ItemType("Egg", "🥚", {
 }))
 
 items.set("trophy", new ItemType("Trophy", "🏆", {
-    price: { points: 500_000_000n, gold: 300_000_000n },
+    price: { points: 250_000_000n, gold: 1_000_000n },
     onUse: (u, a) => {
-        addMul(u, 0, a * 600_000_000n)
+        addMul(u, 0, a * 150_000_000n)
     }
 }))
 
 items.set("car", new ItemType("Venezuela Car", "🚗", {
-    price: { points: 5_000_000_000n },
+    price: { points: 1_000_000_000n },
     onUse: (u, a) => {
         u.workBonus += a + (a / 2n)
     }
 }))
 
 items.set("gambling_pass", new ItemType("Gambling Pass", "🎫", {
-    price: { points: 1_000_000_000_000n, gold: 750_000_000_000n }
+    price: { points: 1_000_000_000n, gold: 1_000_000_000n }
 }))
 
 items.set("ultimate_stonks", new ItemType("Ultimate Stonks", "⚠️", {
