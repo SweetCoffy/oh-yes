@@ -72,9 +72,9 @@ export function format(number: bigint) {
     var d = abs((number % funi.min) / (funi.min / 10n))
     function yes(num: bigint) {
         var str = num.toString()
-        var a = str.slice(0, 4)
-        var count = str.length - 4
-        return `${a}e${count}`
+        var a = str.slice(0, 2)
+        var count = str.length - 2
+        return `${a[0]}.${a[1]}e${count}`
     }
     if (abs(number) > funi.min * 1000n) return `${yes(number)}`
     return `${m}.${d}${funi.suffix}`

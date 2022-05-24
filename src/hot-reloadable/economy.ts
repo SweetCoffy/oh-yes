@@ -78,24 +78,23 @@ items.set("milk", new ItemType("Milk", "🥛", {
 }))
 
 items.set("egg", new ItemType("Egg", "🥚", {
-    price: { points: 1000000n, gold: 5000n },
+    price: { points: 1_000_000n, gold: 5000n },
     onUse: (u, a) => {
-        addMul(u, 1, 1n)
-        addMul(u, 2, 1n)
+        addMul(u, 0, 500_000n)
     }
 }))
 
 items.set("trophy", new ItemType("Trophy", "🏆", {
     price: { points: 500_000_000n, gold: 300_000_000n },
     onUse: (u, a) => {
-        addMul(u, 2, 750n)
+        addMul(u, 0, a * 600_000_000n)
     }
 }))
 
 items.set("car", new ItemType("Venezuela Car", "🚗", {
-    price: { points: 1_000_000_000n },
+    price: { points: 5_000_000_000n },
     onUse: (u, a) => {
-        u.workBonus += a + (a / 4n)
+        u.workBonus += a + (a / 2n)
     }
 }))
 
@@ -104,7 +103,7 @@ items.set("gambling_pass", new ItemType("Gambling Pass", "🎫", {
 }))
 
 items.set("ultimate_stonks", new ItemType("Ultimate Stonks", "⚠️", {
-    price: { points: 1_000_000_000_000_000n },
+    price: { points: 2n ** 1024n },
     onUse: (u, a) => {
         return [a, "Go touch some grass"]
     }
