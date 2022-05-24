@@ -43,6 +43,7 @@ export async function loadCommands(client: Client, ...files: string[]) {
     for (var c of cmds) {
         try {
             //console.log(c.name)
+            if (!c.args) c.args = []
             commands.set(c.name, c)
             lookup.set(c.name, c.name)
             if ("aliases" in c) c.aliases?.forEach(alias => lookup.set(alias, c.name))

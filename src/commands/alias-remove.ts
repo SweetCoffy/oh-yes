@@ -4,6 +4,7 @@ import { Command } from "../types.js";
 export default {
     name: "alias-remove",
     aliases: ["alias-delete", "alias-rm", "delete-alias", "remove-alias", "rm-alias"],
+    args: [{ type: "string", name: "name", required: true }],
     async run(msg, name: string) {
         var { getUser } = getHotReloadable().eco
         var u = await getUser(msg.author)
