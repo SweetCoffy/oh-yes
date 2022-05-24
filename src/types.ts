@@ -27,6 +27,7 @@ export interface UserData {
     multipliers: bigint[],
     items: { [x: string]: bigint | undefined },
     workBonus: bigint,
+    aliases: NodeJS.Dict<string>
 }
 export type CurrencyID = "points" | "gold"
 export type Money = {

@@ -127,6 +127,7 @@ async function getUser(user: User): Promise<UserData> {
         multipliers: [1n],
         items: {},
         workBonus: 0n,
+        aliases: {},
         ...o,
     }
     users.set(user.id, obj)

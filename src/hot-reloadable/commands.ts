@@ -69,11 +69,12 @@ function parseArgs(args: string[], cmdArgs: CommandArg[]): unknown[] {
     if (hasRest) ar.push(rest)
     return ar
 }
-function parseCommand(str: string): { command: Command, args: unknown[] } | null {
+function parseCommand(str: string, aliases: NodeJS.Dict<string> = {}): { command: Command, args: unknown[] } | null {
     var space = str.split(" ")
     var name = space.shift()
     var args = lexer(space.join(" "))
     if (!name) return null;
+    if (aliases[name]) name = aliases[name] as string
     if (!lookup.has(name)) return null;
     var cmd = commands.get(lookup.get(name) as string) as Command
     if (cmd.lexer == false) args = space
