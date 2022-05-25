@@ -5,6 +5,7 @@ import hotReloadable from "./hot-reloadable"
 import { reloadWorkers } from "./workers.js"
 import { Command } from "./types"
 import { readdirR } from "./util.js"
+import { execSync } from "child_process"
 
 const BuildPath = "build"
 export const commands: Collection<string, Command> = new Collection();
@@ -35,11 +36,15 @@ export async function loadCommands(client: Client, ...files: string[]) {
         hidden: true,
         args: [],
         async run(msg) {
+            var m = await msg.reply("Recompiling TypeScript...")
+            console.time("Reload")
+            execSync("tsc -p tsconfig.json")
             var { saveAllUsers } = getHotReloadable().eco
-            var m = await msg.reply("Saving users...")
+            var getreal = m.edit("Getting real...")
             await saveAllUsers()
-            await m.edit("Getting real...")
             await loadAll(msg.client);
+            console.timeEnd("Reload")
+            await getreal
             await m.edit("Reloaded commands & events")
         }
     })

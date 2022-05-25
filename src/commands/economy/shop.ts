@@ -5,7 +5,7 @@ import { addItem, allMoneyFormat, hasMoney, itemString, moneyLeft, multiplyMoney
 export default {
     name: "shop",
     aliases: ["buy"],
-    description: "Buys an item or, if no arguments are passed, shows a list of buyable items",
+    description: "Buys an item or shows a list of items if no arguments passed",
     args: [{
         name: "item", type: "string",
         required: false
