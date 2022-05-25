@@ -1,6 +1,6 @@
-import { getHotReloadable } from "../loader.js";
-import { Command } from "../types";
-import { getMul, moneyFormat } from "../util.js";
+import { getHotReloadable } from "../../loader.js";
+import { Command } from "../../types";
+import { getMul, moneyFormat } from "../../util.js";
 
 export default {
     name: "work",

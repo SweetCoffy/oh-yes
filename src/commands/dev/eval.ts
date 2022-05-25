@@ -1,7 +1,7 @@
 import { Formatters } from "discord.js";
-import { Command } from "../types.js";
+import { Command } from "../../types.js";
 
-import { evalWorkers } from "../workers.js"
+import { evalWorkers } from "../../workers.js"
 export default {
     name: "eval",
     description: "Runs some JavaScript code in a sandbox",
