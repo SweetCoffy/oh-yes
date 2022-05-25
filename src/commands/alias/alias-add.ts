@@ -1,5 +1,5 @@
-import { commands, getHotReloadable, lookup } from "../loader.js";
-import { Command } from "../types.js";
+import { commands, getHotReloadable, lookup } from "../../loader.js";
+import { Command } from "../../types.js";
 
 export default {
     name: "alias-add",

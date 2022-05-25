@@ -1,4 +1,4 @@
-import { commands, lookup } from "../loader.js";
+import { categories, commands, lookup } from "../loader.js";
 import { Command } from "../types";
 
 export default {
@@ -15,7 +15,7 @@ export default {
             if (!cmd) return await msg.reply("How")
             await msg.reply({
                 embeds: [{
-                    title: (command != cmd.name) ? `${command} -> ${cmd.name}` : `${cmd.name}`,
+                    title: `${cmd.name}`,
                     description: cmd.description ?? "N/A",
                     fields: [
                         {
@@ -35,10 +35,23 @@ export default {
                 }]
             })
         } else {
+            function shorten(string: string, maxLen: number) {
+                var words = string.split(" ")
+                var len = 0
+                for (var i = 0; i < words.length; i++) {
+                    len += words[i].length
+                    if (len >= maxLen) break;
+                }
+                return words.slice(0, i + 1).join(" ") + (len > maxLen ? "..." : "")
+            }
             await msg.reply({
                 embeds: [{
                     title: 'List of commands',
-                    description: commands.map((v, k) => `\`${v.name}\` (${v.aliases?.map(el => `\`${el}\``).join(", ") || "no aliases"})`).join("\n")
+                    description: categories.map((commands, name) =>
+                        `**${name}**\n` + commands
+                            .map((v, k) => `\`${v.name}\` ${shorten(v.description || "N/A", 50)}`)
+                            .join("\n"))
+                        .join("\n\n")
                 }]
             })
         }

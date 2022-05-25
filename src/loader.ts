@@ -1,12 +1,14 @@
 import { Client, Collection } from "discord.js"
 import { readdir, readFile } from "fs/promises"
-import { join } from "path"
+import { dirname, join } from "path"
 import hotReloadable from "./hot-reloadable"
 import { reloadWorkers } from "./workers.js"
 import { Command } from "./types"
+import { readdirR } from "./util.js"
 
 const BuildPath = "build"
 export const commands: Collection<string, Command> = new Collection();
+export const categories: Collection<string, Collection<string, Command>> = new Collection();
 export const lookup: Collection<string, string> = new Collection();
 export async function loadFile(file: string): Promise<unknown> {
     // var cont = await readFile(join(BuildPath, file), "utf8")
@@ -25,7 +27,8 @@ export async function loadCommands(client: Client, ...files: string[]) {
     var cmds = await loadFiles(...files.map(el => join("commands", el))) as Command[]
     commands.clear()
     lookup.clear()
-    cmds.unshift({
+    categories.clear()
+    cmds.push({
         name: "reload",
         aliases: ["r"],
         devOnly: true,
@@ -40,16 +43,23 @@ export async function loadCommands(client: Client, ...files: string[]) {
             await m.edit("Reloaded commands & events")
         }
     })
+    var i = 0
     for (var c of cmds) {
         try {
             //console.log(c.name)
             if (!c.args) c.args = []
+            if (files[i]) c.category = dirname(files[i])
+            if (!c.category || c.category == ".") c.category = "no category"
+            if (!categories.has(c.category)) categories.set(c.category, new Collection())
+            categories.get(c.category)?.set(c.name, c)
             commands.set(c.name, c)
             lookup.set(c.name, c.name)
             if ("aliases" in c) c.aliases?.forEach(alias => lookup.set(alias, c.name))
         } catch (er) {
             //console.log(`Error loading ${c.name}:`)
             console.error(er)
+        } finally {
+            i++
         }
     }
 }
@@ -87,7 +97,7 @@ export async function loadAll(client: Client) {
     var r = await Promise.all(
         [
             loadEvents(client, "messages.js"),
-            loadCommands(client, ...await readdir(join(BuildPath, "commands")))
+            loadCommands(client, ...await readdirR(join(BuildPath, "commands")))
         ])
 }
 

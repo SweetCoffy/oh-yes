@@ -1,6 +1,6 @@
-import { getHotReloadable } from "../loader.js";
-import { Command } from "../types.js";
-import { addItem, allMoneyFormat, hasMoney, itemString, moneyLeft, multiplyMoney, subtractMoney } from "../util.js";
+import { getHotReloadable } from "../../loader.js";
+import { Command } from "../../types.js";
+import { addItem, allMoneyFormat, hasMoney, itemString, moneyLeft, multiplyMoney, subtractMoney } from "../../util.js";
 
 export default {
     name: "shop",

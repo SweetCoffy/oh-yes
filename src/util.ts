@@ -1,3 +1,5 @@
+import { readdir } from "fs/promises";
+import { join } from "path";
 import { formats, formatsBigint } from "./formats.js";
 import { getHotReloadable } from "./loader.js";
 import { CurrencyID, Money, OptionalMoney, UserData } from "./types";
@@ -61,6 +63,19 @@ export function formatNumber(number: number) {
     var m = Math.floor(number / funi.min)
     var d = Math.floor(Math.abs((number % funi.min / funi.min) * 100))
     return `${m}.${d}${funi.suffix}`
+}
+export async function readdirR(path: string, ...append: string[]): Promise<string[]> {
+    var p = join(path, ...append)
+    var entries = await readdir(p, { withFileTypes: true })
+    var files = []
+    for (var e of entries) {
+        if (e.isDirectory()) {
+            files.push(...(await readdirR(path, ...append, e.name)))
+            continue
+        }
+        files.push(join(...append, e.name))
+    }
+    return files
 }
 export function format(number: bigint) {
     var funi = null

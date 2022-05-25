@@ -19,6 +19,7 @@ export interface Command {
     args: CommandArg[],
     devOnly?: boolean,
     hidden?: boolean,
+    category?: string,
     run: (msg: Message, ...args: unknown[]) => Promise<any>,
     lexer?: boolean,
 }

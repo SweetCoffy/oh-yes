@@ -1,9 +1,9 @@
 import { User } from "discord.js";
 import { readdir } from "fs/promises";
 import { basename } from "path";
-import { getHotReloadable } from "../loader.js";
-import { Command, UserData } from "../types.js";
-import { allMoneyFormat } from "../util.js";
+import { getHotReloadable } from "../../loader.js";
+import { Command, UserData } from "../../types.js";
+import { allMoneyFormat } from "../../util.js";
 
 export default {
     name: "leaderboard",

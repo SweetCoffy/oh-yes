@@ -1,6 +1,6 @@
-import { getHotReloadable } from "../loader.js";
-import { Command } from "../types.js";
-import { addItem, getItem, itemString } from "../util.js";
+import { getHotReloadable } from "../../loader.js";
+import { Command } from "../../types.js";
+import { addItem, getItem, itemString } from "../../util.js";
 
 export default {
     name: "item",

@@ -1,5 +1,5 @@
-import { getHotReloadable } from "../loader.js";
-import { Command } from "../types.js";
+import { getHotReloadable } from "../../loader.js";
+import { Command } from "../../types.js";
 
 export default {
     name: "alias-list",
