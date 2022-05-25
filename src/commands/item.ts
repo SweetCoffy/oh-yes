@@ -5,6 +5,7 @@ import { addItem, getItem, itemString } from "../util.js";
 export default {
     name: "item",
     aliases: ["items", "use", "inventory", "inv"],
+    description: "Uses an item or, if no arguments are passed, lists your items",
     args: [{ type: "string", name: "item", required: false }, { type: "bigint", name: "amount", required: false }],
     async run(msg, item?: string, amount?: bigint) {
         var { getUser, items } = getHotReloadable().eco

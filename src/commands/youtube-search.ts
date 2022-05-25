@@ -3,7 +3,7 @@ import { search } from "youtube-search-without-api-key"
 export default {
     name: "youtube-search",
     aliases: ["yt", "yt-search", "youtube"],
-    description: "suspicious activity",
+    description: "Searches for a video on youtube",
     args: [{ name: "...terms", type: "string", required: true, minCount: 1 }],
     async run(msg, terms: string[]) {
         await msg.react('🔍')

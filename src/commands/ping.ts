@@ -3,7 +3,7 @@ import { Command } from "../types";
 export default {
     name: "ping",
     aliases: ["pong"],
-    description: "Ping",
+    description: "Shows the bot's latency",
     args: [{ type: "string", name: "...args", required: true }],
     async run(msg) {
         var start = Date.now()

@@ -3,7 +3,7 @@ import { Command } from "../types";
 
 export default {
     name: "help",
-    description: "There is no help",
+    description: "Shows a list of commands or shows info about a command",
     args: [{ name: "command", type: "string", required: false }],
     aliases: ["command", "h", "cmd"],
     async run(msg, command?: string) {

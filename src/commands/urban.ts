@@ -12,7 +12,7 @@ interface UDDefinition {
 export default {
     name: "urban",
     aliases: ["urbandictionary", "ud", "baddefinition"],
-    description: "ported from original oh yes",
+    description: "Looks up a term on Urban Dictionary",
     args: [
         {
             name: "...term",

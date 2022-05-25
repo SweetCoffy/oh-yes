@@ -6,7 +6,7 @@ export default {
     name: "work",
     aliases: ["freemone"],
     args: [],
-    description: "get real",
+    description: "...",
     async run(msg) {
         var { getUser } = getHotReloadable().eco
         var u = await getUser(msg.author)

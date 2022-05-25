@@ -4,7 +4,7 @@ import { Command } from "../types.js";
 import { evalWorkers } from "../workers.js"
 export default {
     name: "eval",
-    description: "get real",
+    description: "Runs some JavaScript code in a sandbox",
     aliases: ["ev"],
     args: [{ name: "...code", required: true, type: "string" }],
     lexer: false,

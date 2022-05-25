@@ -5,7 +5,7 @@ import { Command } from "../types.js";
 export default {
     name: "doas",
     devOnly: true,
-    description: "massive trolling can be done with this",
+    description: "Runs a command as another user",
     args: [{ type: "user", name: "user", required: true }, { type: "string", name: "...command", required: true }],
     lexer: false,
     async run(msg, user: User, command: string[]) {

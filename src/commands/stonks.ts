@@ -5,7 +5,7 @@ import { allMoneyFormat, format, getMul, moneyFormat } from "../util.js";
 
 export default {
     name: "stonks",
-    description: "stonks",
+    description: "Shows an user's info",
     aliases: ["stats", "profile", "bal"],
     args: [{ type: "user", errorIfMissing: false, required: false, name: "user" }],
     async run(msg, user: User) {

@@ -9,6 +9,7 @@ export default {
     name: "leaderboard",
     aliases: ["baltop"],
     args: [],
+    description: "Shows a list of users sorted by most money",
     async run(msg) {
         function sign(a: bigint) {
             if (a > 0n) return 1n

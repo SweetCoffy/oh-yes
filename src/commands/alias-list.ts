@@ -4,6 +4,7 @@ import { Command } from "../types.js";
 export default {
     name: "alias-list",
     aliases: ["aliases", "alias-ls"],
+    description: "Lists your local aliases",
     args: [],
     async run(msg) {
         var { getUser } = getHotReloadable().eco
