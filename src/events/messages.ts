@@ -16,6 +16,7 @@ export default [
                 var d = parseCommand(msg.content.slice(prefix.length), u.aliases)
                 if (!d) return msg.reply(`Bruh`)
                 var { command: cmd, args } = d
+                if (cmd.devOnly && msg.author.id != "602651056320675840") return await msg.reply("Bruh")
                 var converted = await convertArgs(args, cmd.args, msg.client)
                 console.log(converted)
                 await cmd.run(msg, ...converted)
