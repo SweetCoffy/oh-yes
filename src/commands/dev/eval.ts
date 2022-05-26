@@ -1,4 +1,4 @@
-import { Formatters } from "discord.js";
+import { Formatters, Util } from "discord.js";
 import { Command } from "../../types.js";
 
 import { evalWorkers } from "../../workers.js"
@@ -18,11 +18,14 @@ export default {
             worker.postMessage({ code, id })
             var ansi = false
             var result = "undefined"
-            var listener = (v: any) => {
+            var listener = async (v: any) => {
                 if (v.id == id) {
                     worker.removeListener("message", listener)
                     ansi = v.ansi
                     result = v.result
+                    if (v.log) {
+                        await msg.reply(Formatters.codeBlock(v.log.slice(0, 2000)))
+                    }
                     if (v.error) {
                         msg.reply(Formatters.codeBlock(v.error + ""))
                     } else {
