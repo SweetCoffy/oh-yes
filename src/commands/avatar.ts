@@ -13,7 +13,7 @@ export default {
                 {
                     title: `${user.username}'s avatar`,
                     image: {
-                        url: user.displayAvatarURL({ size: 4096, dynamic: true })
+                        url: user.displayAvatarURL({ size: 4096 })
                     }
                 }
             ]

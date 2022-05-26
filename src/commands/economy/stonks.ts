@@ -1,4 +1,4 @@
-import { MessageEmbed, User } from "discord.js";
+import { EmbedBuilder, User } from "discord.js";
 import { getHotReloadable } from "../../loader.js";
 import { Command } from "../../types";
 import { allMoneyFormat, format, getMul, moneyFormat } from "../../util.js";
@@ -14,7 +14,7 @@ export default {
         var data = await getUser(u)
         await msg.reply({
             embeds: [
-                new MessageEmbed()
+                new EmbedBuilder()
                     .setAuthor({ name: u.username, iconURL: u.displayAvatarURL() })
                     .setDescription(
                         `Mone: ${allMoneyFormat(data.money)}

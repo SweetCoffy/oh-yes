@@ -1,8 +1,8 @@
-import { Client, Intents } from "discord.js"
+import { Client, IntentsBitField } from "discord.js"
 import { readFileSync } from "fs"
 import { loadAll, loadEvents } from "./loader.js"
 
-const client = new Client({ intents: Intents.FLAGS.GUILD_MESSAGES | Intents.FLAGS.GUILDS })
+const client = new Client({ intents: IntentsBitField.Flags.GuildMessages | IntentsBitField.Flags.MessageContent | IntentsBitField.Flags.Guilds })
 
 console.time("Loading stuff")
 await loadAll(client)
