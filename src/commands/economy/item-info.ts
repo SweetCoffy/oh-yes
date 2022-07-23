@@ -1,6 +1,6 @@
 import { getHotReloadable } from "../../loader.js";
 import { Command } from "../../types";
-import { itemString } from "../../util.js";
+import { allMoneyFormat, itemString, rarities } from "../../util.js";
 
 export default {
     name: "item-info",
@@ -13,7 +13,20 @@ export default {
         await msg.reply({
             embeds: [{
                 title: itemString(item, undefined),
+                color: rarities[it.rarity].color,
                 description: `${it.description || "N/A"}`,
+                fields: [
+                    {
+                        name: "Price",
+                        value: allMoneyFormat(it.price) || "N/A",
+                        inline: true,
+                    },
+                    {
+                        name: "Rarity",
+                        value: rarities[it.rarity].name,
+                        inline: true,
+                    }
+                ]
             }]
         })
     }

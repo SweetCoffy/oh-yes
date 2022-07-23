@@ -1,6 +1,7 @@
 import { commands, lookup } from "../loader.js";
 import { Command, CommandArg } from "../types";
 import { Client } from "discord.js"
+import { bigintAbbr } from "../util.js";
 
 const Quotes = new Set(["\"", "\'"])
 
@@ -54,12 +55,14 @@ function parseArgs(args: string[], cmdArgs: CommandArg[]): unknown[] {
         console.log(`#${i} ${v}`)
         var value: any = v + ""
         if (arg.type == "number") value = Number(v)
-        else if (arg.type == "bigint") value = BigInt(v)
+        else if (arg.type == "bigint") value = bigintAbbr(v)
         else if (arg.type == "user") {
             var regex = /^<@!?(\d+)>/g
             var matches = regex.exec(v)
             console.log(matches)
             value = matches?.[1] || v
+        } else if (arg.type == "currency") {
+            if (!["points", "gold", "sus"].includes(v)) value = null
         }
         if (arg.name.startsWith("...")) {
             hasRest = true

@@ -1,6 +1,8 @@
+import { Message, User } from "discord.js";
 import { readdir } from "fs/promises";
 import { join } from "path";
 import { formats, formatsBigint } from "./formats.js";
+import hotReloadable from "./hot-reloadable.js";
 import { getHotReloadable } from "./loader.js";
 import { CurrencyID, Money, OptionalMoney, UserData } from "./types";
 
@@ -27,6 +29,10 @@ export function multiplyMoney(money: OptionalMoney, amount: bigint): OptionalMon
     //@ts-ignore
     return Object.fromEntries(Object.entries(money).filter(([k, v]) => typeof v == "bigint").map(([k, v]) => [k, v * amount]))
 }
+export function divideMoney(money: OptionalMoney, amount: bigint): OptionalMoney {
+    //@ts-ignore
+    return Object.fromEntries(Object.entries(money).filter(([k, v]) => typeof v == "bigint").map(([k, v]) => [k, v / amount]))
+}
 export function hasMoney(money: Money) {
     return Object.values(money).every(v => v >= 0n)
 }
@@ -44,12 +50,13 @@ export function abs(number: bigint | number) {
     if (number < 0n) return -number
     return number
 }
-export function itemString(item: string, amount?: bigint) {
+export function itemString(item: string, amount?: bigint, iconOnly?: boolean) {
     var { items } = getHotReloadable().eco
     var info = items.get(item)
     if (info) {
-        if (typeof amount == "bigint" && amount != 1n) return `x${format(amount)} ${info.icon} ${info.name}`
-        return `${info.icon} ${info.name}`
+        if (typeof amount == "bigint" && amount != 1n)
+            return `x${format(amount)} ${info.icon}` + (iconOnly ? "" : ` ${info.name}`)
+        return `${info.icon}` + (iconOnly ? "" : ` ${info.name}`)
     } else {
         return "Unknown item"
     }
@@ -84,12 +91,12 @@ export function format(number: bigint) {
     }
     if (!funi) return `${number}`
     var m = number / funi.min
-    var d = abs((number % funi.min) / (funi.min / 10n))
+    var d = abs((number % funi.min) / (funi.min / 100n))
     function yes(num: bigint) {
         var str = num.toString()
         var a = str.slice(0, 2)
         var count = str.length - 2
-        return `${a[0]}.${a[1]}e${count}`
+        return `${a[0]}.${a[1]}e+${count}`
     }
     if (abs(number) > funi.min * 1000n) return `${yes(number)}`
     return `${m}.${d}${funi.suffix}`
@@ -97,6 +104,7 @@ export function format(number: bigint) {
 export function moneyFormat(number: bigint, currency: CurrencyID = "points", message: boolean = false) {
     var icon = "ᵢₚ"
     if (currency == "gold") icon = "¤"
+    else if (currency == "sus") icon = "ₛᵤₛ"
     return icon + " " + format(number)
 }
 export function bar(num: number, max: number, width: number = 25) {
@@ -112,7 +120,8 @@ export function bar(num: number, max: number, width: number = 25) {
     var chars = Math.ceil((((num - 0.01) / max) * width) % (width))
     while (c < chars) {
         var f = fill
-        var epicVal = Math.min(chars - c, 1)
+        var epicVal = 1
+        if (c + 1 >= chars && num % max != 0) epicVal = num / max * width % 1
         if (epicVal < 1) f = things[0]
         if (epicVal < 7 / 8) f = things[1]
         if (epicVal < 3 / 4) f = things[2]
@@ -120,6 +129,7 @@ export function bar(num: number, max: number, width: number = 25) {
         if (epicVal < 1 / 2) f = things[4]
         if (epicVal < 3 / 8) f = things[5]
         if (epicVal < 1 / 4) f = things[6]
+        console.log(epicVal)
         c++
         str += f
     }
@@ -128,4 +138,41 @@ export function bar(num: number, max: number, width: number = 25) {
         str += bg
     }
     return str
+}
+export var rarities: typeof hotReloadable.eco.rarities = []
+export var rarity: typeof hotReloadable.eco.rarity
+export function resetStuff() {
+    var e = eco()
+    rarities = e.rarities
+    rarity = e.rarity
+}
+/**
+ * Easier of calling `getHotReloadable().eco.getUser`
+ */
+export function getUser(user: User) {
+    return getHotReloadable().eco.getUser(user)
+}
+/**
+ * Easier way of doing `getHotReloadable().eco`
+ */
+export function eco(): typeof hotReloadable.eco {
+    return getHotReloadable().eco
+}
+var numberRegex = /^(\d+)(.\d+)?([a-zA-Z]*)/
+export function bigintAbbr(str: string): bigint | null {
+    var match = str.match(numberRegex)
+    if (!match?.[1]) return null
+    var base = BigInt(match[1]) * 1000n
+    var decimal = 0n
+    if (match?.[2]) decimal = BigInt(match[2].slice(1, 4).padEnd(3, "0"))
+    var mul = 1n
+    if (match[3]) mul = formatsBigint.find(v => v.suffix.trim() == match?.[3])?.min || 1n
+    return (base + decimal) * mul / 1000n
+}
+export function phoneOnly(fn: (m: Message, ...args: any[]) => any) {
+    return async function (m: Message, ...args: any[]): Promise<any> {
+        var info = await getUser(m.author)
+        if (!info.items.phone) return await m.reply(`You need a phone in order to use this command`)
+        return fn(m, ...args)
+    }
 }

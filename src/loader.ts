@@ -4,7 +4,7 @@ import { dirname, join } from "path"
 import hotReloadable from "./hot-reloadable"
 import { reloadWorkers } from "./workers.js"
 import { Command } from "./types"
-import { readdirR } from "./util.js"
+import { readdirR, resetStuff } from "./util.js"
 import { execSync } from "child_process"
 
 const BuildPath = "build"
@@ -87,17 +87,19 @@ export async function loadEvents(client: Client, ...files: string[]) {
 export async function loadAll(client: Client) {
     reloadWorkers()
     // hot reloadable must be loaded before everything else because reasons
-    var hr = await loadFile("hot-reloadable.js") as any
+    var hr = await loadFile("hot-reloadable.js") as typeof hotReloadable
     if ("loadfiles" in hr) {
         var data = await Promise.all(hr.loadfiles.map((lf: any) => loadFile(lf.file)))
         for (var i = 0; i < data.length; i++) {
             //console.log(data[i])
             //console.log(hr.loadfiles[i])
+            //@ts-ignore
             hr[hr.loadfiles[i].name] = data[i]
         }
     }
     //@ts-ignore
     globalThis.hotReloadable = hr
+    resetStuff()
 
     var r = await Promise.all(
         [

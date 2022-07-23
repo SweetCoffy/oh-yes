@@ -1,4 +1,4 @@
-import { Formatters, Util } from "discord.js";
+import { Formatters } from "discord.js";
 import { Command } from "../../types.js";
 
 import { evalWorkers } from "../../workers.js"
