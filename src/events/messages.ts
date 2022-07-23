@@ -11,8 +11,9 @@ export default [
             if (msg.content.startsWith(prefix)) {
                 var hr = getHotReloadable()
                 var { parseCommand, convertArgs } = hr.commands
-                var { getUser } = hr.eco
+                var { getUser, progressionMessages } = hr.eco
                 var u = await getUser(msg.author)
+                var progress = u.progression
                 var d = parseCommand(msg.content.slice(prefix.length), u.aliases)
                 if (!d) return msg.reply(`Bruh`)
                 var { command: cmd, args } = d
@@ -20,6 +21,9 @@ export default [
                 var converted = await convertArgs(args, cmd.args, msg.client)
                 console.log(converted)
                 await cmd.run(msg, ...converted)
+                if (u.progression > progress) {
+                    await msg.reply(progressionMessages[u.progression])
+                }
             }
         } catch (err) {
             console.error(err)

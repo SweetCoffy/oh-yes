@@ -192,6 +192,16 @@ items.set("milk", new ItemType("Milk", "🥛", {
     }
 }))
 
+items.set("venezuela_flag", new ItemType("Venezuela Flag", "🇻🇪", {
+    price: { points: 100_000_000n },
+    rarity: rarity.EPIC,
+    category: "consumable",
+    description: "Enables Venezuela mode",
+    onUse: (u, a) => {
+        if (u.progression < Progression.VenezuelaMode) u.progression = Progression.VenezuelaMode
+        u.vzMode = true
+    }
+}))
 
 items.set("car", new ItemType("Venezuela Car", "🚗", {
     price: { points: 100_000_000n },
@@ -294,7 +304,14 @@ function itemAvailable(item: string, u: UserData): boolean {
     if (info.minProgress > u.progression) return false
     return true
 }
+const progressionMessages: { [x in Progression]: string } = {
+    // Should never happen, but it's still here just in case
+    [Progression.None]: "How did you even get this message?",
 
+    [Progression.VenezuelaMode]:
+        "You have enabled Venezuela Mode for the first time, be prepared for significantly higher item prices and pain." +
+        " On the plus side, you've unlocked some new items on the shop"
+}
 export default {
     getUser,
     saveUser,
@@ -308,4 +325,5 @@ export default {
     // GPUItemType,
     rarity,
     rarities,
+    progressionMessages,
 }
