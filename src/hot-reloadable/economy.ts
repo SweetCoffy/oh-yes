@@ -205,12 +205,13 @@ items.set("venezuela_flag", new ItemType("Venezuela Flag", "🇻🇪", {
 
 items.set("car", new ItemType("Venezuela Car", "🚗", {
     price: { points: 100_000_000n },
-    description: "Increases Work Bonus by 0.5 per item",
+    description: "Increases Work Bonus by 0.5 per item\nGuarantees evading taxes once",
     rarity: rarity.LEGENDARY,
     category: "consumable",
     vzOnly: true,
     onUse: (u, a) => {
         u.workBonus += a + (a / 2n)
+        u.taxevasion = 1
     }
 }))
 
@@ -266,6 +267,7 @@ async function getUser(user: User): Promise<UserData> {
         vzMode: false,
         taxes: 0n,
         progression: 0,
+        taxevasion: 0,
         phone: {
 
         },

@@ -52,6 +52,7 @@ export interface UserData {
     vzMode: boolean,
     taxes: bigint,
     progression: Progression,
+    taxevasion: number,
 }
 export type CurrencyID = "points" | "gold" | "sus"
 export type Money = {
