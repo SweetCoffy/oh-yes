@@ -14,6 +14,7 @@ export default [
                 var { getUser, progressionMessages } = hr.eco
                 var u = await getUser(msg.author)
                 var progress = u.progression
+                let prevTaxes = u.taxes
                 var d = parseCommand(msg.content.slice(prefix.length), u.aliases)
                 if (!d) return msg.reply(`Bruh`)
                 var { command: cmd, args } = d
@@ -23,6 +24,9 @@ export default [
                 await cmd.run(msg, ...converted)
                 if (u.progression > progress) {
                     await msg.reply(progressionMessages[u.progression])
+                }
+                if (u.taxes > prevTaxes && u.taxes >= u.money.points / 4n) {
+                    await msg.reply(`Pay your taxes.`)
                 }
             }
         } catch (err) {
