@@ -1,0 +1,32 @@
+DefaultType: ItemType
+trophy:
+  name: Trophy
+  icon: 🏆
+  price:
+    points: !bigint 1000000000
+    gold: !bigint 1000000
+  description: "Doubles money gained from work"
+  rarity: !rarity Epic
+  unique: true
+  category: utility
+
+gambling_pass:
+  name: Gambling Pass
+  icon: 🎫
+  price: 
+    points: !bigint 1000000000
+    gold: !bigint 1000000000
+  rarity: !rarity Legendary
+  unique: true
+  category: utility
+  description: "Enables gambling"
+
+phone:
+  name: Phone
+  icon: 📱
+  price: 
+    points: !bigint 1000000000
+  rarity: !rarity Unique
+  category: utility
+  description: "Grants a 5% discount for all items in the shop"
+  unique: true

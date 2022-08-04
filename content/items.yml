@@ -1,0 +1,114 @@
+DefaultType: ItemType
+cookie:
+  name: Cookie
+  price: 
+    points: !bigint 10
+  rarity: !rarity Junk
+  category: consumable
+  description: "Increases multiplier[0] by 1/50 per item (rounded down)"
+  onUse: !function
+    from: 'yamlFuncs.item.cookie'
+
+bread:
+  name: Bread
+  icon: 🍞
+  price: 
+    points: !bigint 67
+  rarity: !rarity Common
+  category: "consumable"
+  description: "Increases multiplier[0] by 1/5 per item (rounded down)"
+  onUse: !function
+    from: 'yamlFuncs.item.bread'
+
+baguette:
+  name: "Baguette"
+  icon: 🥖
+  price: 
+    points: !bigint 500
+  rarity: !rarity Common
+  category: "consumable"
+  description: "Increases multiplier[0] by 1/2 per item (rounded down)"
+  onUse: !function
+    from: 'yamlFuncs.item.baguette'
+
+spaghet:
+  name: Spaghet
+  icon: 🍝
+  price:
+    points: !bigint 1000
+    gold: !bigint 10
+  rarity: !rarity Common
+  category: "consumable"
+  description: "Increases multiplier[0] by 1 per item"
+  onUse: !function
+    from: 'yamlFuncs.item.spaghet'
+
+moon_cake:
+  name: Moon Cake
+  icon: 🥮
+  price: 
+    points: !bigint 1900
+    gold: !bigint 50
+  rarity: !rarity Uncommon
+  category: "consumable"
+  description: "Increases multiplier[0] by 2.25 per item"
+  onUse: !function
+    from: 'yamlFuncs.item.moon_cake'
+
+avocado:
+  name: Avocado
+  icon: 🥑
+  price: 
+    points: !bigint 6499
+  rarity: !rarity Uncommon
+  category: "consumable"
+  description: "Increases multiplier[0] by 7.25 and multiplier[1] by 0.05 per item"
+  onUse: !function
+    from: 'yamlFuncs.item.avocado'
+
+egg:
+  name: Egg
+  icon: 🥚
+  price:
+    points: !bigint 1000000
+    gold: !bigint 5000
+  description: "Increases multiplier[0] by 500 K per item"
+  rarity: !rarity Epic
+  category: "consumable"
+  onUse: !function
+    from: 'yamlFuncs.item.egg'
+
+milk:
+  name: Milk
+  icon: 🥛
+  price: 
+    points: !bigint 24000000
+  rarity: !rarity Epic
+  category: "consumable"
+  vzOnly: true,
+  description: "Increases multiplier[1] by 1 per item"
+  onUse: !function
+    from: 'yamlFuncs.item.milk'
+
+venezuela_flag:
+  name: Venezuela Flag
+  icon: 🇻🇪
+  price: 
+    points: !bigint 100000000
+  rarity: !rarity Epic
+  category: consumable
+  description: "Enables Venezuela mode"
+  onUse: !function
+    from: 'yamlFuncs.item.venezuela_flag'
+
+car:
+  name: Venezuela Car
+  icon: 🚗
+  price: 
+    points: !bigint 100000000
+  description: "Increases Work Bonus by 0.5 per item\nGuarantees evading taxes once"
+  rarity: !rarity Legendary
+  category: consumable
+  vzOnly: true
+  onUse: !function
+    from: 'yamlFuncs.item.car'
