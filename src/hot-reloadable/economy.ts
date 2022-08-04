@@ -53,7 +53,7 @@ rarities[rarity.UNIQUE] = {
     color: 0xFF_5D_3D
 }
 export type CategoryType = "consumable" | "utility" | "unique" | "none"
-interface ItemTypeData {
+export interface ItemTypeData {
     name?: string,
     icon?: string,
     price?: OptionalMoney
@@ -79,14 +79,17 @@ class ItemType {
         return this.price
     }
     unique: boolean = false
+    patch(obj: ItemTypeData) {
+        for (var k in obj) {
+            //@ts-ignore
+            this[k] = obj[k]
+        }
+    }
     constructor(name: string, icon: string, obj?: ItemTypeData) {
         this.name = name
         this.icon = icon
         if (obj) {
-            for (var k in obj) {
-                //@ts-ignore
-                this[k] = obj[k]
-            }
+            this.patch(obj)
         }
     }
 }
@@ -307,7 +310,7 @@ function itemAvailable(item: string, u: UserData): boolean {
     return true
 }
 const progressionMessages: { [x in Progression]: string } = {
-    // Should never happen, but it's still here just in case
+    // Should never happen, but it's still here just in case (and so that VS Code doesn't yell at me for not including it)
     [Progression.None]: "How did you even get this message?",
 
     [Progression.VenezuelaMode]:
@@ -322,6 +325,7 @@ export default {
     addMul,
     getPrice,
     itemAvailable,
+    ItemType,
     // ComputerComponentItemType,
     // CPUItemType,
     // GPUItemType,

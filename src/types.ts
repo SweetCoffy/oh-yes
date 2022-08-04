@@ -13,7 +13,7 @@ type CommandCurrencyArg = CommandBaseArg & { type: "currency" }
 type RestArg = CommandBaseArg & { name: `...${string}`, minCount?: number, maxCount?: number }
 export type CommandArgTypes = CommandStringArg | CommandNumberArg | CommandUserArg | CommandBigintArg | CommandCurrencyArg
 export type CommandArg = (CommandArgTypes & RestArg) | CommandArgTypes
-export interface Command {
+interface BaseCommand {
     name: string,
     aliases?: string[],
     description?: string,
@@ -21,9 +21,10 @@ export interface Command {
     devOnly?: boolean,
     hidden?: boolean,
     category?: string,
-    run: (msg: Message, ...args: unknown[]) => Promise<any>,
     lexer?: boolean,
+    run: (msg: Message, ...args: any[]) => Promise<any>
 }
+export type Command = BaseCommand
 interface Component { type: string }
 type CPU = Component
 type GPU = Component

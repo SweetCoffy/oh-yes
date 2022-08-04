@@ -34,11 +34,13 @@ export async function loadCommands(client: Client, ...files: string[]) {
         aliases: ["r"],
         devOnly: true,
         hidden: true,
-        args: [],
-        async run(msg) {
-            var m = await msg.reply("Recompiling TypeScript...")
+        args: [{ type: "string", name: "...flags", required: true }],
+        async run(msg, flags: string[]) {
             console.time("Reload")
-            execSync("tsc -p tsconfig.json")
+            if (!flags.includes("no-ts")) {
+                var m = await msg.reply("Recompiling TypeScript...")
+                execSync("tsc -p tsconfig.json")
+            } else var m = await msg.reply("Skipped recompiling TypeScript")
             var { saveAllUsers } = getHotReloadable().eco
             var getreal = m.edit("Getting real...")
             await saveAllUsers()
@@ -83,23 +85,27 @@ export async function loadEvents(client: Client, ...files: string[]) {
         }
     }
 }
-
 export async function loadAll(client: Client) {
     reloadWorkers()
     // hot reloadable must be loaded before everything else because reasons
     var hr = await loadFile("hot-reloadable.js") as typeof hotReloadable
+    //@ts-ignore
+    globalThis.hotReloadable = hr
     if ("loadfiles" in hr) {
-        var data = await Promise.all(hr.loadfiles.map((lf: any) => loadFile(lf.file)))
-        for (var i = 0; i < data.length; i++) {
+        for (var lf of hr.loadfiles) {
             //console.log(data[i])
             //console.log(hr.loadfiles[i])
             //@ts-ignore
-            hr[hr.loadfiles[i].name] = data[i]
+            hr[lf.name] = await loadFile(lf.file)
         }
     }
-    //@ts-ignore
-    globalThis.hotReloadable = hr
     resetStuff()
+
+    try {
+        await hr.yamlLoader.loadAll()
+    } catch (er) {
+        console.log(er)
+    }
 
     var r = await Promise.all(
         [
