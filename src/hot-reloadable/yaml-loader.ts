@@ -3,6 +3,8 @@ import { readFile, readdir } from "fs/promises"
 import { eco, rarities, rarity, readdirR } from "../util.js"
 import { ItemTypeData } from "./economy.js";
 import { join } from "path";
+import { Progression } from "../types.js";
+import { getHotReloadable } from "../loader.js";
 
 var { items, ItemType } = eco()
 
@@ -40,7 +42,24 @@ const customSchema = DEFAULT_SCHEMA.extend([
         //@ts-ignore
         construct: data => rarity[data.toUpperCase()],
         represent: value => value + "",
-        instanceOf: (v: any) => typeof v == "number" && v in rarities
+        instanceOf: (v: any) => false
+    }),
+    new Type("!progression", {
+        kind: "scalar",
+        resolve: data => data in Progression,
+        //@ts-ignore
+        construct: data => Progression[data],
+        represent: value => value + "",
+        instanceOf: (v: any) => false
+    }),
+    new Type("!function", {
+        kind: "mapping",
+        resolve: data => typeof data.from == "string" || (Array.isArray(data.args) && typeof data.code == "string"),
+        construct: data => typeof data.from == "string" ?
+            data.from.split(".").reduce((prev: any, cur: string) => prev[cur], getHotReloadable()) :
+            new Function(...data.args, data.code),
+        represent: value => "",
+        instanceOf: (v: any) => typeof v == "function"
     })
 ])
 async function loadFile(path: string) {
@@ -57,6 +76,7 @@ async function loadFile(path: string) {
             continue
         }
         var val = type.getValue(o, k)
+        console.log(val)
         type.map.set(k, val)
         console.log(`Added '${k}'`)
     }
