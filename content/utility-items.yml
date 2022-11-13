@@ -37,3 +37,4 @@ suspicious_developer_item:
   rarity: !rarity Unique
   category: utility
   unique: true
+  unlisted: true
