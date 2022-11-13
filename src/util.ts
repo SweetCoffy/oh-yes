@@ -9,8 +9,16 @@ import { CurrencyID, Money, OptionalMoney, UserData } from "./types";
 export function getMul(user: UserData) {
     return user.multipliers.reduce((prev, cur) => prev * cur, 1n)
 }
-
-
+export const CurrencyIcons: { [x in CurrencyID]: string } = {
+    points: "ᵢₚ",
+    gold: "¤",
+    sus: "ₛᵤₛ",
+}
+export enum Currency {
+    points = "points",
+    gold = "gold",
+    sus = "sus",
+}
 export function allMoneyFormat(m: OptionalMoney) {
     //@ts-ignore
     return Object.keys(m).filter((v) => v && m[v as CurrencyID]).map(el => moneyFormat(m[el as CurrencyID], el as CurrencyID)).join(" • ")
@@ -32,6 +40,10 @@ export function multiplyMoney(money: OptionalMoney, amount: bigint): OptionalMon
 export function divideMoney(money: OptionalMoney, amount: bigint): OptionalMoney {
     //@ts-ignore
     return Object.fromEntries(Object.entries(money).filter(([k, v]) => typeof v == "bigint").map(([k, v]) => [k, v / amount]))
+}
+export function divideMoneyAll(money: OptionalMoney, money2: OptionalMoney): OptionalMoney {
+    //@ts-ignore
+    return Object.fromEntries(Object.entries(money).filter(([k, v]) => typeof v == "bigint").map(([k, v]) => [k, v / (money2[k] ?? 1n)]))
 }
 export function hasMoney(money: Money) {
     return Object.values(money).every(v => v >= 0n)
@@ -102,9 +114,7 @@ export function format(number: bigint) {
     return `${m}.${d}${funi.suffix}`
 }
 export function moneyFormat(number: bigint, currency: CurrencyID = "points", message: boolean = false) {
-    var icon = "ᵢₚ"
-    if (currency == "gold") icon = "¤"
-    else if (currency == "sus") icon = "ₛᵤₛ"
+    let icon = CurrencyIcons[currency]
     return icon + " " + format(number)
 }
 export function bar(num: number, max: number, width: number = 25) {
@@ -140,11 +150,13 @@ export function bar(num: number, max: number, width: number = 25) {
     return str
 }
 export var rarities: typeof hotReloadable.eco.rarities = []
-export var rarity: typeof hotReloadable.eco.rarity
+export var Rarity: typeof hotReloadable.eco.Rarity
+export type BigIntFraction = [bigint, bigint]
+export type Fraction = [number, number]
 export function resetStuff() {
     var e = eco()
     rarities = e.rarities
-    rarity = e.rarity
+    Rarity = e.Rarity
 }
 /**
  * Easier of calling `getHotReloadable().eco.getUser`
@@ -175,4 +187,33 @@ export function phoneOnly(fn: (m: Message, ...args: any[]) => any) {
         if (!info.items.phone) return await m.reply(`You need a phone in order to use this command`)
         return fn(m, ...args)
     }
+}
+export function splitCamelCase(str: string) {
+    let regex = /(?<= [a - z])(?=[A - Z])/g
+    return str.split(regex)
+}
+export function titleCase(str: string | string[]) {
+    let words = Array.isArray(str) ? str : str.split(" ")
+    return words.map(v => v[0].toUpperCase() + v.slice(1).toLowerCase()).join(" ")
+}
+export function gcd(a: bigint, b: bigint) {
+    while (b != 0n) {
+        var t = b
+        b = a % b
+        a = t
+    }
+    return a
+}
+export function simplifyFrac([a, b]: BigIntFraction) {
+    let g = gcd(a, b)
+    return [a / g, b / g]
+}
+export function formatFraction(frac: BigIntFraction) {
+    let [a, b] = simplifyFrac(frac);
+    let c = a / b;
+    if (c > 0) {
+        a -= c * b;
+        return `${c} + ${a}\u2044${b}`
+    }
+    return `${a}\u2044${b}`
 }

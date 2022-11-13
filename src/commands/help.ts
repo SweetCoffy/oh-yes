@@ -1,18 +1,26 @@
 import { categories, commands, lookup } from "../loader.js";
-import { Command } from "../types";
+import { Command, SubcommandGroup } from "../types";
 
 export default {
     name: "help",
     description: "Shows a list of commands or shows info about a command",
-    args: [{ name: "command", type: "string", required: false }],
+    args: [{ name: "...command", type: "string", required: false }],
     aliases: ["command", "h", "cmd"],
-    async run(msg, command?: string) {
+    async run(msg, commandSegments?: string[]) {
         //console.log(command)
-        if (command) {
-            var realName = lookup.get(command)
-            if (!realName) return await msg.reply("Unknown command")
-            var cmd = commands.get(realName)
-            if (!cmd) return await msg.reply("How")
+        if (commandSegments && commandSegments.length > 0) {
+            let c = commands
+            let lu = lookup
+            let cmd: Command | undefined = undefined
+            for (let segment of commandSegments) {
+                let st = lu.get(segment) ?? segment
+                cmd = c.get(st)
+                if (!cmd?.isSubcommandGroup) break;
+                let group = cmd as SubcommandGroup
+                c = group.commands
+                lu = group._lookup
+            }
+            if (!cmd) return await msg.reply("Unknown command.")
             await msg.reply({
                 embeds: [{
                     title: `${cmd.name}`,
@@ -20,10 +28,14 @@ export default {
                     fields: [
                         {
                             name: "Usage",
-                            value: `${command} ${cmd.args.map(el => {
-                                if (el.required) return `<${el.name}>`
-                                return `[${el.name}]`
-                            }).join(" ")}`,
+                            value: `${cmd.name} ${cmd.isSubcommandGroup ?
+                                `<one of: ${(cmd as SubcommandGroup).commands.map((_, k) => k).join("\u2014")}>` :
+                                cmd.args.map(el => {
+                                    let inner = el.name
+                                    if (el.type == "enum") inner = `${el.name}, one of: ${Object.keys(el.enum).join("\u2014")}`
+                                    if (el.required) return `<${inner}>`
+                                    return `[${inner}]`
+                                }).join(" ")}`,
                             inline: true,
                         },
                         {

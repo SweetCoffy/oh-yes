@@ -11,7 +11,6 @@ console.timeEnd("Loading stuff")
 console.time("Logging in")
 await client.login(readFileSync(".token", "utf8").trim())
 console.timeEnd("Logging in")
-
 process.on("uncaughtException", (err, origin) => {
     console.log(err)
     console.log(origin)

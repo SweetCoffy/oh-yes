@@ -1,6 +1,6 @@
 import { load, DEFAULT_SCHEMA, Schema, Type } from "js-yaml"
 import { readFile, readdir } from "fs/promises"
-import { eco, rarities, rarity, readdirR } from "../util.js"
+import { eco, rarities, Rarity, readdirR } from "../util.js"
 import { ItemTypeData } from "./economy.js";
 import { join } from "path";
 import { Progression } from "../types.js";
@@ -38,9 +38,9 @@ const customSchema = DEFAULT_SCHEMA.extend([
     }),
     new Type("!rarity", {
         kind: "scalar",
-        resolve: data => data.toUpperCase() in rarity,
+        resolve: data => data in Rarity,
         //@ts-ignore
-        construct: data => rarity[data.toUpperCase()],
+        construct: data => Rarity[data],
         represent: value => value + "",
         instanceOf: (v: any) => false
     }),

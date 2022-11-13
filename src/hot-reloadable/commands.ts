@@ -1,7 +1,7 @@
 import { commands, lookup } from "../loader.js";
-import { Command, CommandArg } from "../types";
-import { Client } from "discord.js"
-import { bigintAbbr } from "../util.js";
+import { Command, CommandArg, SubcommandGroup } from "../types";
+import { Client, Collection } from "discord.js"
+import { bigintAbbr, getUser } from "../util.js";
 
 const Quotes = new Set(["\"", "\'"])
 
@@ -63,6 +63,8 @@ function parseArgs(args: string[], cmdArgs: CommandArg[]): unknown[] {
             value = matches?.[1] || v
         } else if (arg.type == "currency") {
             if (!["points", "gold", "sus"].includes(v)) value = null
+        } else if (arg.type == "enum") {
+            if (!Object.keys(arg.enum).includes(v)) value = null
         }
         if (arg.name.startsWith("...")) {
             hasRest = true
@@ -72,14 +74,14 @@ function parseArgs(args: string[], cmdArgs: CommandArg[]): unknown[] {
     if (hasRest) ar.push(rest)
     return ar
 }
-function parseCommand(str: string, aliases: NodeJS.Dict<string> = {}): { command: Command, args: unknown[] } | null {
+function parseCommand(str: string, aliases: NodeJS.Dict<string> = {}, commandsCol = commands, lookupCol = lookup): { command: Command, args: unknown[] } | null {
     var space = str.split(" ")
     var name = space.shift()
     var args = lexer(space.join(" "))
     if (!name) return null;
     if (aliases[name]) name = aliases[name] as string
-    if (!lookup.has(name)) return null;
-    var cmd = commands.get(lookup.get(name) as string) as Command
+    if (!lookupCol.has(name)) return null;
+    var cmd = commandsCol.get(lookupCol.get(name) as string) as Command
     if (cmd.lexer == false) args = space
     var required = cmd.args.reduce((prev, cur) => prev + ((cur.required && !cur.name.startsWith("...")) as unknown as number), 0)
     if (args.length < required) return null;
@@ -107,8 +109,46 @@ async function convertArgs(args: any[], cmdArgs: CommandArg[], client: Client): 
         return await convert(value, arg)
     }))
 }
+function subcommandGroup(name: string, devOnly: boolean = false) {
+    let command: SubcommandGroup = {
+        name,
+        devOnly,
+        args: [{ name: "...", required: true, type: "string" }],
+        lexer: false,
+        isSubcommandGroup: true,
+        commands: new Collection(),
+        _lookup: new Collection(),
+        async run(msg, a: string[]) {
+            if (!a?.length) {
+                if (this.default) return await this.default.run(msg)
+                await msg.reply("No subcommand provided.")
+            } else {
+                let u = await getUser(msg.author)
+                let str = a.join(" ")
+                let d = parseCommand(str, u.aliases, this.commands, this._lookup)
+                if (!d) return await msg.reply("Bruh")
+                let cmd = d.command
+                let converted = await convertArgs(d.args, cmd.args, msg.client)
+                await cmd.run(msg, ...converted)
+            }
+        },
+    }
+    return command;
+}
+function addCommandToGroup(group: SubcommandGroup, command: Command, defaultCommand = false) {
+    group.commands.set(command.name, command);
+    let names = [command.name, ...(command.aliases || [])]
+    for (let name of names) {
+        group._lookup.set(name, command.name);
+    }
+    console.log(`Added '${command.name}' to group '${group.name}'`)
+    if (defaultCommand) group.default = command
+    command._group = group;
+}
 export default {
     parseCommand,
     lexer,
     convertArgs,
+    subcommandGroup,
+    addCommandToGroup,
 }

@@ -1,5 +1,5 @@
 import { getHotReloadable } from "../../loader.js";
-import { Command, MIN_TAX_PROGRESSION } from "../../types.js";
+import { Command, MinTaxProgression } from "../../types.js";
 import { getMul, moneyFormat } from "../../util.js";
 
 export default {
@@ -16,7 +16,7 @@ export default {
         var gold = (BigInt(Math.floor(Math.random() * 6)) + u.workBonus / 8n) * mul
         u.money.points += points
         u.money.gold += gold
-        if (u.progression >= MIN_TAX_PROGRESSION) u.taxes += (points * (BigInt(u.progression) + 1n) / 20n);
+        if (u.progression >= MinTaxProgression) u.taxes += (points * (BigInt(u.progression) + 1n) / 10n);
         await msg.reply(`Earned ${moneyFormat(points)} and ${moneyFormat(gold, "gold")}`)
     }
 } as Command

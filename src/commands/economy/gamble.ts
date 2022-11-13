@@ -1,12 +1,12 @@
 import { Command, CurrencyID } from "../../types.js";
-import { allMoneyFormat, getUser, moneyFormat } from "../../util.js";
+import { allMoneyFormat, Currency, getUser, moneyFormat } from "../../util.js";
 
 export default {
     name: "gamble",
     description: "Crippling gambling addiction",
     args: [
         { name: "money", type: "bigint", required: true },
-        { name: "currency", type: "currency", required: false },
+        { name: "currency", type: "enum", enum: Currency, required: false },
     ],
     async run(msg, money: bigint, currency: CurrencyID = "points") {
         var u = await getUser(msg.author);

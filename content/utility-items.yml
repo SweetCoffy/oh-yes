@@ -30,3 +30,10 @@ phone:
   category: utility
   description: "Grants a 5% discount for all items in the shop"
   unique: true
+
+suspicious_developer_item:
+  name: Suspicious Developer Item
+  icon: 🐛
+  rarity: !rarity Unique
+  category: utility
+  unique: true

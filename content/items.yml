@@ -1,24 +1,29 @@
 DefaultType: ItemType
+
 cookie:
   name: Cookie
   price: 
     points: !bigint 10
   rarity: !rarity Junk
   category: consumable
-  description: "Increases multiplier[0] by 1/50 per item (rounded down)"
+  description: "Increases multiplier[0] by 1/128 per item (rounded down)"
+  attributes:
+    multiplier: [[!bigint 0, !bigint 0, !bigint 0, !bigint 0, !bigint 0, !bigint 0, !bigint 0, !bigint 1]]
   onUse: !function
-    from: 'yamlFuncs.item.cookie'
+    from: 'yamlFuncs.item.generic_multiplier'
 
 bread:
   name: Bread
   icon: 🍞
   price: 
-    points: !bigint 67
+    points: !bigint 300
   rarity: !rarity Common
   category: "consumable"
-  description: "Increases multiplier[0] by 1/5 per item (rounded down)"
+  description: "Increases multiplier[0] by 1/4 per item (rounded down)"
+  attributes:
+    multiplier: [[!bigint 0, !bigint 0, !bigint 1]]
   onUse: !function
-    from: 'yamlFuncs.item.bread'
+    from: 'yamlFuncs.item.generic_multiplier'
 
 baguette:
   name: "Baguette"
@@ -28,8 +33,10 @@ baguette:
   rarity: !rarity Common
   category: "consumable"
   description: "Increases multiplier[0] by 1/2 per item (rounded down)"
+  attributes:
+    multiplier: [[!bigint 0, !bigint 1]]
   onUse: !function
-    from: 'yamlFuncs.item.baguette'
+    from: 'yamlFuncs.item.generic_multiplier'
 
 spaghet:
   name: Spaghet
@@ -40,8 +47,10 @@ spaghet:
   rarity: !rarity Common
   category: "consumable"
   description: "Increases multiplier[0] by 1 per item"
+  attributes:
+    multiplier: [[!bigint 1]]
   onUse: !function
-    from: 'yamlFuncs.item.spaghet'
+    from: 'yamlFuncs.item.generic_multiplier'
 
 moon_cake:
   name: Moon Cake
@@ -52,8 +61,10 @@ moon_cake:
   rarity: !rarity Uncommon
   category: "consumable"
   description: "Increases multiplier[0] by 2.25 per item"
+  attributes:
+    multiplier: [[!bigint 2, !bigint 0, !bigint 1]]
   onUse: !function
-    from: 'yamlFuncs.item.moon_cake'
+    from: 'yamlFuncs.item.generic_multiplier'
 
 avocado:
   name: Avocado
@@ -62,9 +73,11 @@ avocado:
     points: !bigint 6499
   rarity: !rarity Uncommon
   category: "consumable"
-  description: "Increases multiplier[0] by 7.25 and multiplier[1] by 0.05 per item"
+  description: "Increases multiplier[0] by 7.25 and multiplier[1] by 0.0625 per item"
+  attributes:
+    multiplier: [[!bigint 7, !bigint 0, !bigint 1], [!bigint 0, !bigint 0, !bigint 0, !bigint 0, !bigint 1]]
   onUse: !function
-    from: 'yamlFuncs.item.avocado'
+    from: 'yamlFuncs.item.generic_multiplier'
 
 egg:
   name: Egg
@@ -75,8 +88,10 @@ egg:
   description: "Increases multiplier[0] by 500 K per item"
   rarity: !rarity Epic
   category: "consumable"
+  attributes:
+    multiplier: [[!bigint 500000]]
   onUse: !function
-    from: 'yamlFuncs.item.egg'
+    from: 'yamlFuncs.item.generic_multiplier'
 
 milk:
   name: Milk
@@ -85,10 +100,12 @@ milk:
     points: !bigint 24000000
   rarity: !rarity Epic
   category: "consumable"
-  vzOnly: true,
+  vzOnly: true
   description: "Increases multiplier[1] by 1 per item"
+  attributes:
+    multiplier: [[!bigint 0], [!bigint 1]]
   onUse: !function
-    from: 'yamlFuncs.item.milk'
+    from: 'yamlFuncs.item.generic_multiplier'
 
 venezuela_flag:
   name: Venezuela Flag

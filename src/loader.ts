@@ -35,18 +35,13 @@ export async function loadCommands(client: Client, ...files: string[]) {
         devOnly: true,
         hidden: true,
         args: [{ type: "string", name: "...flags", required: true }],
-        async run(msg, flags: string[]) {
+        async run(msg, flags: string[] = []) {
             console.time("Reload")
-            if (!flags.includes("no-ts")) {
-                var m = await msg.reply("Recompiling TypeScript...")
-                execSync("tsc -p tsconfig.json")
-            } else var m = await msg.reply("Skipped recompiling TypeScript")
             var { saveAllUsers } = getHotReloadable().eco
-            var getreal = m.edit("Getting real...")
+            var m = await msg.reply("Getting real...")
             await saveAllUsers()
             await loadAll(msg.client);
             console.timeEnd("Reload")
-            await getreal
             await m.edit("Reloaded commands & events")
         }
     })

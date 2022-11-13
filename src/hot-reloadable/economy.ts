@@ -2,53 +2,53 @@ import { Collection, User } from "discord.js";
 import { existsSync } from "fs";
 import { readFile, writeFile } from "fs/promises";
 import { getData } from "../data.js";
-import { CurrencyID, Money, OptionalMoney, Progression, UserData, VZ_PRICEMUL } from "../types.js";
-import { divideMoney, multiplyMoney } from "../util.js";
+import { CurrencyID, Money, OptionalMoney, Progression, UserData, VzPriceMul } from "../types.js";
+import { allMoneyFormat, divideMoney, formatNumber, multiplyMoney, format, formatFraction, titleCase, splitCamelCase } from "../util.js";
 
-var rarity = {
-    JUNK: 0,
-    COMMON: 1,
-    UNCOMMON: 2,
-    RARE: 3,
-    EPIC: 4,
-    LEGENDARY: 5,
-    MYTHICAL: 6,
-    UNIQUE: 7,
+enum Rarity {
+    Junk = 0,
+    Common = 1,
+    Uncommon = 2,
+    Rare = 3,
+    Epic = 4,
+    Legendary = 5,
+    Mythical = 6,
+    Unique = 7,
 }
-interface Rarity {
+interface RarityInfo {
     name: string,
     color: number,
 }
-var rarities: Rarity[] = []
-rarities[rarity.JUNK] = {
+var rarities: RarityInfo[] = []
+rarities[Rarity.Junk] = {
     name: "Junk",
     color: 0x12_12_12,
 }
-rarities[rarity.COMMON] = {
+rarities[Rarity.Common] = {
     name: "Common",
     color: 0xFF_FF_FF,
 }
-rarities[rarity.UNCOMMON] = {
+rarities[Rarity.Uncommon] = {
     name: "Uncommon",
     color: 0x28_FC_03,
 }
-rarities[rarity.RARE] = {
+rarities[Rarity.Rare] = {
     name: "Rare",
     color: 0x03_5A_FC,
 }
-rarities[rarity.EPIC] = {
+rarities[Rarity.Epic] = {
     name: "Epic",
     color: 0xCA_03_FC,
 }
-rarities[rarity.LEGENDARY] = {
+rarities[Rarity.Legendary] = {
     name: "Legendary",
     color: 0xFF_80_EE,
 }
-rarities[rarity.MYTHICAL] = {
+rarities[Rarity.Mythical] = {
     name: "Mythical",
     color: 0xFC_BA_03,
 }
-rarities[rarity.UNIQUE] = {
+rarities[Rarity.Unique] = {
     name: "Unique",
     color: 0xFF_5D_3D
 }
@@ -59,35 +59,129 @@ export interface ItemTypeData {
     price?: OptionalMoney
     description?: string,
     unlisted?: boolean,
-    rarity?: number,
+    rarity?: Rarity,
     unique?: boolean,
     category?: CategoryType,
     minProgress?: Progression,
     vzOnly?: boolean,
-    onUse?: (u: UserData, a: bigint) => [bigint, string] | void
+    attributes?: Collection<string, unknown | ItemAttributeData>,
+    onUse?: (u: UserData, a: bigint, type: ItemType) => [bigint, string] | void
 }
-interface ItemType extends ItemTypeData { }
-class ItemType {
+interface ItemAttributeData {
+    key: string,
+    name: string,
+    type: ItemAttributeType,
+    value: unknown,
+}
+class ItemAttribute {
+    key: string
+    name: string
+    type: ItemAttributeType
+    store: NodeJS.Dict<unknown>
+    get value(): unknown {
+        return this.store[this.key];
+    }
+    set value(value: unknown) {
+        this.store[this.key] = value;
+    }
+    toString(long = false): string {
+        switch (this.type) {
+            case ItemAttributeType.BigInt:
+                return format(this.value as bigint)
+            case ItemAttributeType.Money:
+                return allMoneyFormat(this.value as OptionalMoney)
+            case ItemAttributeType.Multiplier:
+                return (this.value as bigint[][]).map((v, i) => ({
+                    i,
+                    base: v[0],
+                    factors: v.slice(1).map((j, c) => ({ div: 2n ** BigInt(c + 1), value: j })).filter(v => v.value > 0n),
+                })).filter(v => v.base > 0n || v.factors.some(f => f.value > 0n)).map(v =>
+                    `M[${v.i}] += ${[format(v.base), ...v.factors.map(e => formatFraction([e.value, e.div]))].join(" + ")}`).join(", ")
+        }
+        return this.value?.toString() ?? "N/A";
+    }
+    constructor(data: ItemAttributeData, store: NodeJS.Dict<unknown>) {
+        this.key = data.key;
+        this.name = data.name;
+        this.type = data.type;
+        this.store = store;
+        this.value = data.value;
+    }
+}
+enum ItemAttributeType {
+    Default,
+    Money,
+    BigInt,
+    Multiplier,
+}
+var attrNameTypeMap: NodeJS.Dict<ItemAttributeType> = {
+    multiplier: ItemAttributeType.Multiplier,
+    price: ItemAttributeType.Money
+}
+export interface ItemType extends ItemTypeData { }
+export class ItemType {
     name: string
     icon: string
-    rarity: number = rarity.COMMON
+    rarity: Rarity = Rarity.Common
     price: OptionalMoney = {}
     category: CategoryType = "none"
+    /**
+     * Minimum progression required in order to buy this item.
+     */
     minProgress: Progression = Progression.None
     vzOnly: boolean = false
+    /**
+     * A collection of `ItemAttribute` containing the attributes of this `ItemType`. Item attributes can be used to set item properties that will be shown in a specific way when showing item info
+     */
+    attributes: Collection<string, ItemAttribute>
+    /**
+     * Stores `ItemAttribute` values.
+     */
+    _attrData: NodeJS.Dict<unknown>
     get buyPrice(): OptionalMoney {
         return this.price
     }
+    /**
+     * Whether or not an user can only have one of this item in their inventory. Useful for utility items.
+     */
     unique: boolean = false
     patch(obj: ItemTypeData) {
         for (var k in obj) {
             //@ts-ignore
-            this[k] = obj[k]
+            var v = obj[k];
+            //@ts-ignore
+            var thisV = this[k];
+            if (thisV instanceof Collection && !(v instanceof Collection)) {
+                v = new Collection(Object.entries(v))
+            }
+            if (v instanceof Collection && thisV instanceof Collection) {
+                if (k == "attributes") {
+                    for (let [attr, value] of v) {
+                        let a: ItemAttributeData =
+                            { key: attr, name: titleCase(splitCamelCase(attr)), value: null, type: attrNameTypeMap[attr] ?? ItemAttributeType.Default }
+                        if (typeof value == "object" && !Array.isArray(value)) {
+                            if ("name" in value) a.name = value.name;
+                            if ("type" in value) a.type = value.type;
+                            if ("value" in value) a.value = value.value;
+                        } else {
+
+                            a.value = value
+                        }
+                        thisV.set(attr, new ItemAttribute(a, this._attrData))
+                    }
+                } else v.forEach((v, k) => thisV.set(k, v))
+            } else {
+                //@ts-ignore
+                this[k] = v
+            }
         }
+        console.log(this.attributes)
     }
     constructor(name: string, icon: string, obj?: ItemTypeData) {
         this.name = name
         this.icon = icon
+        this.attributes = new Collection()
+        this._attrData = {}
         if (obj) {
             this.patch(obj)
         }
@@ -151,8 +245,10 @@ async function getUser(user: User): Promise<UserData> {
         taxes: 0n,
         progression: 0,
         taxevasion: 0,
+        evadedTaxes: 0,
         phone: {
 
+            ...(o?.phone || {}),
         },
         ...o,
         money: { points: o?.money?.points ?? 3000n, gold: o?.money?.gold ?? 150n, sus: o?.money?.sus ?? 0n },
@@ -172,16 +268,28 @@ async function saveUser(id: string | User): Promise<void> {
 async function saveAllUsers() {
     await Promise.all(users.map((v, k) => saveUser(k)))
 }
+/**
+ * Determines the price of `item` for the user. Taking into account Venezuela Mode and other factors.
+ * @param item j
+ * @param u j
+ * @param amount j
+ */
 function getPrice(item: string, u: UserData, amount: bigint): OptionalMoney {
     var info = items.get(item)
     if (!info) return {}
     if (u.items.suspicious_developer_item) return {}
     var ml = 1n
-    if (u.vzMode) ml *= VZ_PRICEMUL
+    if (u.vzMode) ml *= VzPriceMul
     var price = multiplyMoney(info.price, amount * ml)
     if (u.items.phone) price = divideMoney(multiplyMoney(price, 95n), 100n)
     return price
 }
+/**
+ * Determines whether or not the user can buy this item.
+ * @param item 
+ * @param u 
+ * @returns 
+ */
 function itemAvailable(item: string, u: UserData): boolean {
     var info = items.get(item)
     if (!info) return false
@@ -209,7 +317,8 @@ export default {
     // ComputerComponentItemType,
     // CPUItemType,
     // GPUItemType,
-    rarity,
+    Rarity: Rarity,
     rarities,
     progressionMessages,
+    ItemAttributeType,
 }
