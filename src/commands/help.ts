@@ -48,8 +48,8 @@ export default {
             })
         } else {
             function shorten(string: string, maxLen: number) {
-                var words = string.split(" ")
-                var len = 0
+                let words = string.split(" ")
+                let len = 0
                 for (var i = 0; i < words.length; i++) {
                     len += words[i].length
                     if (len >= maxLen) break;

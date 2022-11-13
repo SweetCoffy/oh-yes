@@ -12,11 +12,11 @@ export const commands: Collection<string, Command> = new Collection();
 export const categories: Collection<string, Collection<string, Command>> = new Collection();
 export const lookup: Collection<string, string> = new Collection();
 export async function loadFile(file: string): Promise<unknown> {
-    // var cont = await readFile(join(BuildPath, file), "utf8")
-    // var url = `data:text/javascript;base64,${btoa(cont)}`
-    var url = "./" + file + `?t=${Date.now()}`
+    // let cont = await readFile(join(BuildPath, file), "utf8")
+    // let url = `data:text/javascript;base64,${btoa(cont)}`
+    let url = "./" + file + `?t=${Date.now()}`
     //console.log(url)
-    var d = await import(url)
+    let d = await import(url)
     if ("default" in d) return d.default
     return d
 }
@@ -25,7 +25,7 @@ export async function loadFiles(...files: string[]): Promise<unknown[]> {
 }
 
 export async function loadCommands(client: Client, ...files: string[]) {
-    var cmds = await loadFiles(...files.map(el => join("commands", el))) as Command[]
+    let cmds = await loadFiles(...files.map(el => join("commands", el))) as Command[]
     commands.clear()
     lookup.clear()
     categories.clear()
@@ -37,16 +37,16 @@ export async function loadCommands(client: Client, ...files: string[]) {
         args: [{ type: "string", name: "...flags", required: true }],
         async run(msg, flags: string[] = []) {
             console.time("Reload")
-            var { saveAllUsers } = getHotReloadable().eco
-            var m = await msg.reply("Getting real...")
+            let { saveAllUsers } = getHotReloadable().eco
+            let m = await msg.reply("Getting real...")
             await saveAllUsers()
             await loadAll(msg.client);
             console.timeEnd("Reload")
             await m.edit("Reloaded commands & events")
         }
     })
-    var i = 0
-    for (var c of cmds) {
+    let i = 0
+    for (let c of cmds) {
         try {
             //console.log(c.name)
             if (!c.args) c.args = []
@@ -66,14 +66,14 @@ export async function loadCommands(client: Client, ...files: string[]) {
     }
 }
 
-var addedListeners: Map<string, (...args: any) => any> = new Map()
+let addedListeners: Map<string, (...args: any) => any> = new Map()
 export async function loadEvents(client: Client, ...files: string[]) {
-    var events = await loadFiles(...files.map(el => join("events", el))) as ((...args: any) => any)[][]
-    for (var [k, v] of addedListeners) {
+    let events = await loadFiles(...files.map(el => join("events", el))) as ((...args: any) => any)[][]
+    for (let [k, v] of addedListeners) {
         client.removeListener(k, v)
     }
-    for (var eventList of events) {
-        for (var event of eventList) {
+    for (let eventList of events) {
+        for (let event of eventList) {
             //console.log(event.name)
             client.on(event.name, event)
             addedListeners.set(event.name, event)
@@ -83,11 +83,11 @@ export async function loadEvents(client: Client, ...files: string[]) {
 export async function loadAll(client: Client) {
     reloadWorkers()
     // hot reloadable must be loaded before everything else because reasons
-    var hr = await loadFile("hot-reloadable.js") as typeof hotReloadable
+    let hr = await loadFile("hot-reloadable.js") as typeof hotReloadable
     //@ts-ignore
     globalThis.hotReloadable = hr
     if ("loadfiles" in hr) {
-        for (var lf of hr.loadfiles) {
+        for (let lf of hr.loadfiles) {
             //console.log(data[i])
             //console.log(hr.loadfiles[i])
             //@ts-ignore
@@ -102,7 +102,7 @@ export async function loadAll(client: Client) {
         console.log(er)
     }
 
-    var r = await Promise.all(
+    let r = await Promise.all(
         [
             loadEvents(client, "messages.js"),
             loadCommands(client, ...await readdirR(join(BuildPath, "commands")))

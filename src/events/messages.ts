@@ -5,17 +5,17 @@ import { eco } from "../util.js";
 const prefix = ";"
 
 async function handleCommand(msg: Message) {
-    var hr = getHotReloadable()
-    var { parseCommand, convertArgs } = hr.commands
-    var { getUser, progressionMessages } = hr.eco
-    var u = await getUser(msg.author)
+    let hr = getHotReloadable()
+    let { parseCommand, convertArgs } = hr.commands
+    let { getUser, progressionMessages } = hr.eco
+    let u = await getUser(msg.author)
     let prevTaxes = u.taxes
-    var progress = u.progression
-    var d = parseCommand(msg.content.slice(prefix.length), u.aliases)
+    let progress = u.progression
+    let d = parseCommand(msg.content.slice(prefix.length), u.aliases)
     if (!d) return msg.reply(`Bruh`)
-    var { command: cmd, args } = d
+    let { command: cmd, args } = d
     if (cmd.devOnly && msg.author.id != "602651056320675840") return await msg.reply("Bruh")
-    var converted = await convertArgs(args, cmd.args, msg.client)
+    let converted = await convertArgs(args, cmd.args, msg.client)
     console.log(converted)
     await cmd.run(msg, ...converted)
     if (u.progression > progress) {

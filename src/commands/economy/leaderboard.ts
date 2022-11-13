@@ -19,12 +19,12 @@ export default {
         function thing(a: bigint, b: bigint) {
             return Number(sign(a - b))
         }
-        var { getUser } = getHotReloadable().eco
-        var files = await readdir("data")
-        var users = await (await Promise.allSettled(files.map(el => msg.client.users.fetch(basename(el, ".json")))))
+        let { getUser } = getHotReloadable().eco
+        let files = await readdir("data")
+        let users = await (await Promise.allSettled(files.map(el => msg.client.users.fetch(basename(el, ".json")))))
             .filter(el => el.status == "fulfilled")
             .map(el => el.status == "fulfilled" && el.value) as User[]
-        var data = await Promise.all(users.map(async user => [user, await getUser(user)])) as [User, UserData][]
+        let data = await Promise.all(users.map(async user => [user, await getUser(user)])) as [User, UserData][]
         data.sort(([_1, a], [_2, b]) => thing(b.money.points, a.money.points))
         await msg.reply({
             content: `${data.map(([user, data], i) => `#${i + 1} ${user.username}: ${allMoneyFormat(data.money)}`).join("\n")}`

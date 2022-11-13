@@ -6,9 +6,9 @@ export default {
     description: "Shows the bot's latency",
     args: [{ type: "string", name: "...args", required: true }],
     async run(msg) {
-        var start = Date.now()
-        var m = await msg.reply("a")
-        var time = Date.now() - start
+        let start = Date.now()
+        let m = await msg.reply("a")
+        let time = Date.now() - start
         await m.edit(`Pong: ${time}ms`)
     }
 } as Command

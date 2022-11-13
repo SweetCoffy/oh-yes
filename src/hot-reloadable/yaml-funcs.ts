@@ -1,7 +1,7 @@
 import { Progression, UserData } from "../types.js";
 import { eco, getPartialValue } from "../util.js";
 import { ItemType } from "./economy.js";
-var { addMul } = eco()
+let { addMul } = eco()
 
 export default {
     item: {

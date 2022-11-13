@@ -8,15 +8,15 @@ const Quotes = new Set(["\"", "\'"])
 // No more shlex, get real
 function lexer(str: string) {
     //return shlex.split(str)
-    var args: string[] = []
-    var acc = ""
-    var quote = ""
+    let args: string[] = []
+    let acc = ""
+    let quote = ""
     function resetAcc() {
         if (acc) args.push(acc)
         acc = ""
     }
-    for (var i = 0; i < str.length; i++) {
-        var char = str[i]
+    for (let i = 0; i < str.length; i++) {
+        let char = str[i]
         if (char == "\\") {
             acc += str[i + 1]
             continue
@@ -45,20 +45,20 @@ function lexer(str: string) {
 
 function parseArgs(args: string[], cmdArgs: CommandArg[]): unknown[] {
     if (!cmdArgs) return []
-    var rest: any[] = []
-    var ar: unknown[] = []
-    var hasRest = false
+    let rest: any[] = []
+    let ar: unknown[] = []
+    let hasRest = false
 
-    for (var i = 0; i < args.length; i++) {
-        var v = args[i]
-        var arg = cmdArgs[Math.min(i, cmdArgs.length - 1)]
+    for (let i = 0; i < args.length; i++) {
+        let v = args[i]
+        let arg = cmdArgs[Math.min(i, cmdArgs.length - 1)]
         console.log(`#${i} ${v}`)
-        var value: any = v + ""
+        let value: any = v + ""
         if (arg.type == "number") value = Number(v)
         else if (arg.type == "bigint") value = bigintAbbr(v)
         else if (arg.type == "user") {
-            var regex = /^<@!?(\d+)>/g
-            var matches = regex.exec(v)
+            let regex = /^<@!?(\d+)>/g
+            let matches = regex.exec(v)
             console.log(matches)
             value = matches?.[1] || v
         } else if (arg.type == "currency") {
@@ -75,15 +75,15 @@ function parseArgs(args: string[], cmdArgs: CommandArg[]): unknown[] {
     return ar
 }
 function parseCommand(str: string, aliases: NodeJS.Dict<string> = {}, commandsCol = commands, lookupCol = lookup): { command: Command, args: unknown[] } | null {
-    var space = str.split(" ")
-    var name = space.shift()
-    var args = lexer(space.join(" "))
+    let space = str.split(" ")
+    let name = space.shift()
+    let args = lexer(space.join(" "))
     if (!name) return null;
     if (aliases[name]) name = aliases[name] as string
     if (!lookupCol.has(name)) return null;
-    var cmd = commandsCol.get(lookupCol.get(name) as string) as Command
+    let cmd = commandsCol.get(lookupCol.get(name) as string) as Command
     if (cmd.lexer == false) args = space
-    var required = cmd.args.reduce((prev, cur) => prev + ((cur.required && !cur.name.startsWith("...")) as unknown as number), 0)
+    let required = cmd.args.reduce((prev, cur) => prev + ((cur.required && !cur.name.startsWith("...")) as unknown as number), 0)
     if (args.length < required) return null;
 
     return { command: cmd, args: parseArgs(args, cmd.args) }
@@ -101,7 +101,7 @@ async function convertArgs(args: any[], cmdArgs: CommandArg[], client: Client): 
         return v;
     }
     return await Promise.all(args.map(async (value, i) => {
-        var arg = cmdArgs[i]
+        let arg = cmdArgs[i]
         if (!arg) return value
         if (Array.isArray(value)) {
             return await Promise.all(value.map(el => convert(el, arg)))

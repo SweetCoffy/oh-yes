@@ -9,16 +9,16 @@ export default {
     args: [{ name: "...code", required: true, type: "string" }],
     lexer: false,
     async run(msg, cod: string[]) {
-        var code = cod.join(" ")
+        let code = cod.join(" ")
         try {
-            var workerInfo = evalWorkers.find((v) => v.busy <= 0) || evalWorkers[Math.floor(Math.random() * evalWorkers.length)]
+            let workerInfo = evalWorkers.find((v) => v.busy <= 0) || evalWorkers[Math.floor(Math.random() * evalWorkers.length)]
             workerInfo.busy++
-            var worker = workerInfo.worker
-            var id = Date.now()
+            let worker = workerInfo.worker
+            let id = Date.now()
             worker.postMessage({ code, id })
-            var ansi = false
-            var result = "undefined"
-            var listener = async (v: any) => {
+            let ansi = false
+            let result = "undefined"
+            let listener = async (v: any) => {
                 if (v.id == id) {
                     worker.removeListener("message", listener)
                     ansi = v.ansi
@@ -37,7 +37,7 @@ export default {
             worker.on("message", listener)
         } catch (er) {
         } finally {
-            ansi = false
+
         }
     }
 } as Command

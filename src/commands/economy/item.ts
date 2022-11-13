@@ -8,10 +8,10 @@ export default {
     description: "Uses an item. If no arguments are passed, lists your items instead",
     args: [{ type: "string", name: "item", required: false }, { type: "bigint", name: "amount", required: false }],
     async run(msg, item?: string, amount?: bigint) {
-        var { getUser, items } = getHotReloadable().eco
-        var u = await getUser(msg.author)
+        let { getUser, items } = getHotReloadable().eco
+        let u = await getUser(msg.author)
         if (!item) {
-            var amounts = u.items
+            let amounts = u.items
             await msg.reply({
                 embeds: [
                     {
@@ -21,13 +21,13 @@ export default {
                 ]
             })
         } else {
-            var info = items.get(item)
+            let info = items.get(item)
             if (!info) return await msg.reply(`That item doesn't exist`)
             if (!getItem(u, item)) return await msg.reply(`You don't have that item`)
             if (!info.onUse) return await msg.reply(`You can't use that item`)
-            var amt = amount || 1n
+            let amt = amount || 1n
             if (getItem(u, item) < amt) return await msg.reply(`You don't have enough of that item`)
-            var res = info.onUse(u, amt, info)
+            let res = info.onUse(u, amt, info)
             if (typeof res?.[0] == "bigint") amt = res[0];
             if (Math.random() < 0.99) addItem(u, item, -amt)
             if (typeof res?.[1] == "string") {

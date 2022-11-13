@@ -19,7 +19,7 @@ interface RarityInfo {
     name: string,
     color: number,
 }
-var rarities: RarityInfo[] = []
+let rarities: RarityInfo[] = []
 rarities[Rarity.Junk] = {
     name: "Junk",
     color: 0x12_12_12,
@@ -121,7 +121,7 @@ enum ItemAttributeType {
     GenericPartial,
     TaxEvasion,
 }
-var attrNameTypeMap: NodeJS.Dict<ItemAttributeType> = {
+let attrNameTypeMap: NodeJS.Dict<ItemAttributeType> = {
     multiplier: ItemAttributeType.Multiplier,
     price: ItemAttributeType.Money,
     workBonus: ItemAttributeType.GenericPartial,
@@ -151,15 +151,15 @@ export class ItemType {
         return this.price
     }
     /**
-     * Whether or not an user can only have one of this item in their inventory. Useful for utility items.
+     * Whether or not a user can only have one of this item in their inventory. Useful for utility items.
      */
     unique: boolean = false
     patch(obj: ItemTypeData) {
-        for (var k in obj) {
+        for (let k in obj) {
             //@ts-ignore
-            var v = obj[k];
+            let v = obj[k];
             //@ts-ignore
-            var thisV = this[k];
+            let thisV = this[k];
             if (thisV instanceof Collection && !(v instanceof Collection)) {
                 v = new Collection(Object.entries(v))
             }
@@ -205,8 +205,8 @@ export class ItemType {
 // }
 // class CPUItemType extends ComputerComponentItemType { }
 // class GPUItemType extends ComputerComponentItemType { }
-var users: Collection<string, UserData> = new Collection()
-var items: Collection<string, ItemType> = new Collection()
+let users: Collection<string, UserData> = new Collection()
+let items: Collection<string, ItemType> = new Collection()
 
 // items.set("intol_xeson_get_real", new CPUItemType("Intol™ Xeson© Get Real", "<:intolxesongetreal:980699295084871700>", {
 //     perf: 5,
@@ -244,8 +244,8 @@ function addMul(u: UserData, i: number, amt: bigint) {
 }
 async function getUser(user: User): Promise<UserData> {
     if (users.has(user.id)) return users.get(user.id) as UserData
-    var o = await getData(user.id)
-    var obj: UserData = {
+    let o = await getData(user.id)
+    let obj: UserData = {
         multipliers: [1n],
         items: {},
         workBonus: 0n,
@@ -284,12 +284,12 @@ async function saveAllUsers() {
  * @param amount j
  */
 function getPrice(item: string, u: UserData, amount: bigint): OptionalMoney {
-    var info = items.get(item)
+    let info = items.get(item)
     if (!info) return {}
     if (u.items.suspicious_developer_item) return {}
-    var ml = 1n
+    let ml = 1n
     if (u.vzMode) ml *= VzPriceMul
-    var price = multiplyMoney(info.price, amount * ml)
+    let price = multiplyMoney(info.price, amount * ml)
     if (u.items.phone) price = divideMoney(multiplyMoney(price, 95n), 100n)
     return price
 }
@@ -300,7 +300,7 @@ function getPrice(item: string, u: UserData, amount: bigint): OptionalMoney {
  * @returns 
  */
 function itemAvailable(item: string, u: UserData): boolean {
-    var info = items.get(item)
+    let info = items.get(item)
     if (!info) return false
     if (info.vzOnly && !u.vzMode) return false
     if (info.minProgress > u.progression) return false

@@ -7,9 +7,9 @@ export default {
     description: "b",
     args: [{ type: "string", name: "item", required: true }],
     async run(msg, item: string) {
-        var { items } = getHotReloadable().eco
-        var u = await getUser(msg.author);
-        var it = items.get(item)
+        let { items } = getHotReloadable().eco
+        let u = await getUser(msg.author);
+        let it = items.get(item)
         if (!it) return await msg.reply("No.")
         await msg.reply({
             embeds: [{

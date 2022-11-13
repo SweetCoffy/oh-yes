@@ -5,13 +5,13 @@ import { allMoneyFormat, eco, format, getMul, itemString, moneyFormat } from "..
 
 export default {
     name: "stonks",
-    description: "Shows an user's info",
+    description: "Shows a user's info",
     aliases: ["stats", "profile", "bal"],
     args: [{ type: "user", errorIfMissing: false, required: false, name: "user" }],
     async run(msg, user: User) {
-        var { getUser } = getHotReloadable().eco
-        var u = user || msg.author
-        var data = await getUser(u)
+        let { getUser } = getHotReloadable().eco
+        let u = user || msg.author
+        let data = await getUser(u)
         await msg.reply({
             embeds: [
                 new EmbedBuilder()

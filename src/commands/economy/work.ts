@@ -8,12 +8,12 @@ export default {
     args: [],
     description: "...",
     async run(msg) {
-        var { getUser } = getHotReloadable().eco
-        var u = await getUser(msg.author)
-        var mul = getMul(u)
+        let { getUser } = getHotReloadable().eco
+        let u = await getUser(msg.author)
+        let mul = getMul(u)
         if (u.items.trophy) mul *= 2n
-        var points = (BigInt(Math.floor(Math.random() * 50)) + u.workBonus) * mul
-        var gold = (BigInt(Math.floor(Math.random() * 6)) + u.workBonus / 8n) * mul
+        let points = (BigInt(Math.floor(Math.random() * 50)) + u.workBonus) * mul
+        let gold = (BigInt(Math.floor(Math.random() * 6)) + u.workBonus / 8n) * mul
         u.money.points += points
         u.money.gold += gold
         if (u.progression >= MinTaxProgression) u.taxes += (points * (BigInt(u.progression) + 1n) / 10n);

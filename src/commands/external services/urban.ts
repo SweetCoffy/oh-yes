@@ -21,8 +21,8 @@ export default {
         }],
     async run(msg, terms: string[]) {
         await msg.react('🔍')
-        var term = terms.join(" ")
-        var regex = /\[(.+?)\]/g
+        let term = terms.join(" ")
+        let regex = /\[(.+?)\]/g
         function uFormat(str: string) {
             return str.replace(regex, (sub, term: string) => {
                 return `[${term}](https://www.urbandictionary.com/define.php?term=${encodeURIComponent(term)})`
@@ -32,13 +32,13 @@ export default {
             return n + ""
         }
         try {
-            var defs: UDDefinition[] = (await (await fetch(`http://api.urbandictionary.com/v0/define?term=${encodeURIComponent(term)}`)).json()).list
+            let defs: UDDefinition[] = (await (await fetch(`http://api.urbandictionary.com/v0/define?term=${encodeURIComponent(term)}`)).json()).list
             //console.log(defs)
-            var def = defs.sort((a: any, b: any) => b.thumbs_up - a.thumbs_up)[0]
+            let def = defs.sort((a: any, b: any) => b.thumbs_up - a.thumbs_up)[0]
             if (!def) return await msg.reply("No definitions?")
-            var e = uFormat(def.example)
-            var d = uFormat(def.definition)
-            var embed = {
+            let e = uFormat(def.example)
+            let d = uFormat(def.definition)
+            let embed = {
                 author: {
                     name: def.author
                 },
@@ -58,8 +58,8 @@ export default {
                     },
                 ]
             }
-            var embed2 = { title: "Example", description: e.slice(0, 2048), color: 0x4287f5 };
-            var embed3: any = {
+            let embed2 = { title: "Example", description: e.slice(0, 2048), color: 0x4287f5 };
+            let embed3: any = {
                 description: uFormat(def.definition).slice(2048, 2048 * 2),
                 color: 0x4287f5,
             }

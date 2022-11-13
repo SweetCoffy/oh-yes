@@ -9,12 +9,12 @@ export default {
         { name: "currency", type: "enum", enum: Currency, required: false },
     ],
     async run(msg, money: bigint, currency: CurrencyID = "points") {
-        var u = await getUser(msg.author);
+        let u = await getUser(msg.author);
         if (!u.items["gambling_pass"]) return await msg.reply("You need a gambling pass in order to gamble")
         if (u.money[currency] < money) return await msg.reply("No money?");
-        var n = Number((money * 10n) / u.money[currency]);
+        let n = Number((money * 10n) / u.money[currency]);
 
-        var chance = 0.4 + (n / 10) / 12 + (Math.sin(Date.now()) / 7.5)
+        let chance = 0.4 + (n / 10) / 12 + (Math.sin(Date.now()) / 7.5)
         u.money[currency] -= money
         if (Math.random() > chance) {
             if (n > 9) return await msg.reply("You lost all your money lmfao")

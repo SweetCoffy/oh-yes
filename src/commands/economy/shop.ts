@@ -15,8 +15,8 @@ export default {
         required: false,
     }],
     async run(msg, item?: string, amount?: bigint) {
-        var { items, getUser, getPrice, itemAvailable } = getHotReloadable().eco
-        var u = await getUser(msg.author)
+        let { items, getUser, getPrice, itemAvailable } = getHotReloadable().eco
+        let u = await getUser(msg.author)
         if (!item) {
             await msg.reply({
                 embeds: [{
@@ -25,13 +25,13 @@ export default {
                 }]
             })
         } else {
-            var info = items.get(item)
+            let info = items.get(item)
             if (!info) return await msg.reply("what")
             if (info.unlisted || !itemAvailable(item, u)) return await msg.reply(`You cannot buy this item`)
             if (info.unique && u.items[item]) return await msg.reply(`You can only have one of this item`)
-            var amt = amount || 0n
+            let amt = amount || 0n
             if (info.unique && amt > 1n) return await msg.reply(`You can't buy more than one of this item`)
-            var total = getPrice(item, u, amt)
+            let total = getPrice(item, u, amt)
             if (hasMoney(moneyLeft(u.money, total))) {
                 subtractMoney(u.money, total)
                 addItem(u, item, amt)

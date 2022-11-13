@@ -3,7 +3,7 @@ import { Command } from "../types";
 
 export default {
     name: "avatar",
-    description: "Shows an user's avatar",
+    description: "Shows a user's avatar",
     args: [{ type: "user", name: "user", required: false, errorIfMissing: false }],
     aliases: ["pfp"],
     async run(msg, user: User) {

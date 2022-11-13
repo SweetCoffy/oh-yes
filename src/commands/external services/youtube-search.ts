@@ -7,9 +7,9 @@ export default {
     args: [{ name: "...terms", type: "string", required: true, minCount: 1 }],
     async run(msg, terms: string[]) {
         await msg.react('🔍')
-        var query = terms.join(" ")
+        let query = terms.join(" ")
         if (!query) return await msg.reply("Can't search for nothing")
-        var results = await search(query)
+        let results = await search(query)
         await msg.reply(results[0].url)
     }
 } as Command

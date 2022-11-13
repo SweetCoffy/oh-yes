@@ -6,7 +6,7 @@ import { join } from "path";
 import { Progression } from "../types.js";
 import { getHotReloadable } from "../loader.js";
 
-var { items, ItemType } = eco()
+let { items, ItemType } = eco()
 
 interface ContentType<T> {
     getValue: (obj: any, id: string) => T | null,
@@ -17,7 +17,7 @@ interface ContentType<T> {
 const types = new Map<string, ContentType<any>>();
 types.set("ItemType", {
     getValue: (obj: ItemTypeData, id: string) => {
-        var it = items.get(id)
+        let it = items.get(id)
         if (it) {
             it.patch(obj)
             return it
@@ -64,18 +64,18 @@ const customSchema = DEFAULT_SCHEMA.extend([
 ])
 async function loadFile(path: string) {
     console.log(`Loading file: ${path}`)
-    var obj = load(await readFile(path, "utf8"), { schema: customSchema }) as any
-    var defaultType = obj.DefaultType
+    let obj = load(await readFile(path, "utf8"), { schema: customSchema }) as any
+    let defaultType = obj.DefaultType
     delete obj.DefaultType
-    for (var k in obj) {
-        var o = obj[k]
-        var type = types.get(o.type || defaultType)
+    for (let k in obj) {
+        let o = obj[k]
+        let type = types.get(o.type || defaultType)
         delete o.type
         if (!type) {
             console.log(`${k} has an invalid type: '${o.type || defaultType}'`)
             continue
         }
-        var val = type.getValue(o, k)
+        let val = type.getValue(o, k)
         console.log(val)
         type.map.set(k, val)
         console.log(`Added '${k}'`)

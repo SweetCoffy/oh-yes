@@ -28,7 +28,7 @@ export function moneyLeft(money: Money, price: OptionalMoney): Money {
     return Object.fromEntries(Object.entries(money).map(([k, v]) => [k, v - (price[k] || 0n)]))
 }
 export function subtractMoney(money: Money, price: OptionalMoney): void {
-    for (var k in price) {
+    for (let k in price) {
         //@ts-ignore
         money[k] -= price[k] || 0n
     }
@@ -63,8 +63,8 @@ export function abs(number: bigint | number) {
     return number
 }
 export function itemString(item: string, amount?: bigint, iconOnly?: boolean) {
-    var { items } = getHotReloadable().eco
-    var info = items.get(item)
+    let { items } = getHotReloadable().eco
+    let info = items.get(item)
     if (info) {
         if (typeof amount == "bigint" && amount != 1n)
             return `x${format(amount)} ${info.icon}` + (iconOnly ? "" : ` ${info.name}`)
@@ -74,20 +74,20 @@ export function itemString(item: string, amount?: bigint, iconOnly?: boolean) {
     }
 }
 export function formatNumber(number: number) {
-    var funi = null
-    for (var f of formats) {
+    let funi = null
+    for (let f of formats) {
         if (Math.abs(number) >= f.min) funi = f
     }
     if (!funi) return `${number}`
-    var m = Math.floor(number / funi.min)
-    var d = Math.floor(Math.abs((number % funi.min / funi.min) * 100))
+    let m = Math.floor(number / funi.min)
+    let d = Math.floor(Math.abs((number % funi.min / funi.min) * 100))
     return `${m}.${d}${funi.suffix}`
 }
 export async function readdirR(path: string, ...append: string[]): Promise<string[]> {
-    var p = join(path, ...append)
-    var entries = await readdir(p, { withFileTypes: true })
-    var files = []
-    for (var e of entries) {
+    let p = join(path, ...append)
+    let entries = await readdir(p, { withFileTypes: true })
+    let files = []
+    for (let e of entries) {
         if (e.isDirectory()) {
             files.push(...(await readdirR(path, ...append, e.name)))
             continue
@@ -97,17 +97,17 @@ export async function readdirR(path: string, ...append: string[]): Promise<strin
     return files
 }
 export function format(number: bigint) {
-    var funi = null
-    for (var f of formatsBigint) {
+    let funi = null
+    for (let f of formatsBigint) {
         if (abs(number) >= f.min) funi = f
     }
     if (!funi) return `${number}`
-    var m = number / funi.min
-    var d = abs((number % funi.min) / (funi.min / 100n))
+    let m = number / funi.min
+    let d = abs((number % funi.min) / (funi.min / 100n))
     function yes(num: bigint) {
-        var str = num.toString()
-        var a = str.slice(0, 2)
-        var count = str.length - 2
+        let str = num.toString()
+        let a = str.slice(0, 2)
+        let count = str.length - 2
         return `${a[0]}.${a[1]}e+${count}`
     }
     if (abs(number) > funi.min * 1000n) return `${yes(number)}`
@@ -118,19 +118,19 @@ export function moneyFormat(number: bigint, currency: CurrencyID = "points", mes
     return icon + " " + format(number)
 }
 export function bar(num: number, max: number, width: number = 25) {
-    var c = 0
-    var fill = "█"
-    var bg = " "
+    let c = 0
+    let fill = "█"
+    let bg = " "
 
-    var things = ["▉", "▊", "▋", "▌", "▍", "▎", "▏"]
+    let things = ["▉", "▊", "▋", "▌", "▍", "▎", "▏"]
 
-    var str = ""
+    let str = ""
     str += "+".repeat(Math.min(Math.max(Math.floor((num - 0.01) / max), 0), width - 1))
     width -= str.length;
-    var chars = Math.ceil((((num - 0.01) / max) * width) % (width))
+    let chars = Math.ceil((((num - 0.01) / max) * width) % (width))
     while (c < chars) {
-        var f = fill
-        var epicVal = 1
+        let f = fill
+        let epicVal = 1
         if (c + 1 >= chars && num % max != 0) epicVal = num / max * width % 1
         if (epicVal < 1) f = things[0]
         if (epicVal < 7 / 8) f = things[1]
@@ -149,12 +149,12 @@ export function bar(num: number, max: number, width: number = 25) {
     }
     return str
 }
-export var rarities: typeof hotReloadable.eco.rarities = []
-export var Rarity: typeof hotReloadable.eco.Rarity
+export let rarities: typeof hotReloadable.eco.rarities = []
+export let Rarity: typeof hotReloadable.eco.Rarity
 export type BigIntFraction = [bigint, bigint]
 export type Fraction = [number, number]
 export function resetStuff() {
-    var e = eco()
+    let e = eco()
     rarities = e.rarities
     Rarity = e.Rarity
 }
@@ -170,20 +170,20 @@ export function getUser(user: User) {
 export function eco(): typeof hotReloadable.eco {
     return getHotReloadable().eco
 }
-var numberRegex = /^(\d+)(.\d+)?([a-zA-Z]*)/
+let numberRegex = /^(\d+)(.\d+)?([a-zA-Z]*)/
 export function bigintAbbr(str: string): bigint | null {
-    var match = str.match(numberRegex)
+    let match = str.match(numberRegex)
     if (!match?.[1]) return null
-    var base = BigInt(match[1]) * 1000n
-    var decimal = 0n
+    let base = BigInt(match[1]) * 1000n
+    let decimal = 0n
     if (match?.[2]) decimal = BigInt(match[2].slice(1, 4).padEnd(3, "0"))
-    var mul = 1n
+    let mul = 1n
     if (match[3]) mul = formatsBigint.find(v => v.suffix.trim() == match?.[3])?.min || 1n
     return (base + decimal) * mul / 1000n
 }
 export function phoneOnly(fn: (m: Message, ...args: any[]) => any) {
     return async function (m: Message, ...args: any[]): Promise<any> {
-        var info = await getUser(m.author)
+        let info = await getUser(m.author)
         if (!info.items.phone) return await m.reply(`You need a phone in order to use this command`)
         return fn(m, ...args)
     }
@@ -198,7 +198,7 @@ export function titleCase(str: string | string[]) {
 }
 export function gcd(a: bigint, b: bigint) {
     while (b != 0n) {
-        var t = b
+        let t = b
         b = a % b
         a = t
     }
