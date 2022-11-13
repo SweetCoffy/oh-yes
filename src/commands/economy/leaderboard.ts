@@ -27,7 +27,7 @@ export default {
         let data = await Promise.all(users.map(async user => [user, await getUser(user)])) as [User, UserData][]
         data.sort(([_1, a], [_2, b]) => thing(b.money.points, a.money.points))
         await msg.reply({
-            content: `${data.map(([user, data], i) => `#${i + 1} ${user.username}: ${allMoneyFormat(data.money)}`).join("\n")}`
+            content: `${data.map(([user, data], i) => `#${i + 1} ${user.username} \u2014 ${allMoneyFormat(data.money)}`).join("\n")}`
         })
     }
 } as Command
