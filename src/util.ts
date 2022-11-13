@@ -189,7 +189,7 @@ export function phoneOnly(fn: (m: Message, ...args: any[]) => any) {
     }
 }
 export function splitCamelCase(str: string) {
-    let regex = /(?<= [a - z])(?=[A - Z])/g
+    let regex = /(?<=[a-z])(?=[A-Z])/g
     return str.split(regex)
 }
 export function titleCase(str: string | string[]) {
@@ -204,7 +204,7 @@ export function gcd(a: bigint, b: bigint) {
     }
     return a
 }
-export function simplifyFrac([a, b]: BigIntFraction) {
+export function simplifyFrac([a, b]: BigIntFraction): BigIntFraction {
     let g = gcd(a, b)
     return [a / g, b / g]
 }
@@ -216,4 +216,22 @@ export function formatFraction(frac: BigIntFraction) {
         return `${c} + ${a}\u2044${b}`
     }
     return `${a}\u2044${b}`
+}
+
+export function getPartialValue(v: bigint[], a: bigint = 1n) {
+    return v.reduce((prev, cur, i) => prev + (cur * a) / (2n ** BigInt(i)), 0n)
+}
+
+export function getPartialFrac(v: bigint[], am: bigint = 1n, scale: bigint = 20n): BigIntFraction {
+    let a = 0n, b = 0n
+    let value = getPartialValue(v, am * scale)
+    a = value
+    b = am * scale
+    return simplifyFrac([a, b])
+}
+export function xTimes(v: number | bigint) {
+    if (v == 1) return "once"
+    if (v == 2) return "twice"
+    if (v == 3) return "twice"
+    return `${v} times`
 }

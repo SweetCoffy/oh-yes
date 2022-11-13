@@ -123,9 +123,12 @@ car:
   icon: 🚗
   price: 
     points: !bigint 100000000
-  description: "Increases Work Bonus by 0.5 per item\nGuarantees evading taxes once"
+  description: "Increases Work Bonus by 1.5 per item\nGuarantees evading taxes once"
   rarity: !rarity Legendary
   category: consumable
   vzOnly: true
+  attributes:
+    workBonus: [!bigint 1, !bigint 1]
+    evadeTaxes: 1
   onUse: !function
     from: 'yamlFuncs.item.car'

@@ -3,7 +3,7 @@ import { existsSync } from "fs";
 import { readFile, writeFile } from "fs/promises";
 import { getData } from "../data.js";
 import { CurrencyID, Money, OptionalMoney, Progression, UserData, VzPriceMul } from "../types.js";
-import { allMoneyFormat, divideMoney, formatNumber, multiplyMoney, format, formatFraction, titleCase, splitCamelCase } from "../util.js";
+import { allMoneyFormat, divideMoney, formatNumber, multiplyMoney, format, formatFraction, titleCase, splitCamelCase, getPartialFrac, xTimes } from "../util.js";
 
 enum Rarity {
     Junk = 0,
@@ -97,6 +97,11 @@ class ItemAttribute {
                     factors: v.slice(1).map((j, c) => ({ div: 2n ** BigInt(c + 1), value: j })).filter(v => v.value > 0n),
                 })).filter(v => v.base > 0n || v.factors.some(f => f.value > 0n)).map(v =>
                     `M[${v.i}] += ${[format(v.base), ...v.factors.map(e => formatFraction([e.value, e.div]))].join(" + ")}`).join(", ")
+            case ItemAttributeType.GenericPartial:
+                return `${formatFraction(getPartialFrac(this.value as bigint[]))}`
+            case ItemAttributeType.TaxEvasion:
+                let e = this.value as number
+                return e > 0 ? `Yes (${xTimes(e)})` : `No`
         }
         return this.value?.toString() ?? "N/A";
     }
@@ -113,10 +118,14 @@ enum ItemAttributeType {
     Money,
     BigInt,
     Multiplier,
+    GenericPartial,
+    TaxEvasion,
 }
 var attrNameTypeMap: NodeJS.Dict<ItemAttributeType> = {
     multiplier: ItemAttributeType.Multiplier,
-    price: ItemAttributeType.Money
+    price: ItemAttributeType.Money,
+    workBonus: ItemAttributeType.GenericPartial,
+    evadeTaxes: ItemAttributeType.TaxEvasion,
 }
 export interface ItemType extends ItemTypeData { }
 export class ItemType {
