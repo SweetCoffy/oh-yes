@@ -15,7 +15,7 @@ export default {
             embeds: [{
                 title: itemString(item, undefined),
                 color: rarities[it.rarity].color,
-                description: `${it.description || "N/A"}`,
+                description: `${`${it.lore ? "*'" + it.lore + "'*\n" : ""}${it.description}` || "N/A"}`,
                 fields: [
                     {
                         name: "Price",

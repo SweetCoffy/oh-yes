@@ -114,9 +114,22 @@ venezuela_flag:
     points: !bigint 100000000
   rarity: !rarity Epic
   category: consumable
-  description: "Enables Venezuela mode"
+  description: "Enables Venezuela Mode"
   onUse: !function
     from: 'yamlFuncs.item.venezuela_flag'
+
+the_chair:
+  name: The Chair
+  icon: 🪑
+  price:
+    points: !bigint 1000000
+  rarity: !rarity Epic
+  minProgress: !progression VenezuelaMode
+  category: consumable,
+  description: "Disables Venezuela Mode"
+  lore: "It's not just a regular chair, it's The Chair."
+  onUse: !function
+    from: 'yamlFuncs.item.the_chair'
 
 car:
   name: Venezuela Car
@@ -126,7 +139,7 @@ car:
   description: "Increases Work Bonus by 1.5 per item\nGuarantees evading taxes once"
   rarity: !rarity Legendary
   category: consumable
-  vzOnly: true
+  minProgress: !progression VenezuelaMode
   attributes:
     workBonus: [!bigint 1, !bigint 1]
     evadeTaxes: 1

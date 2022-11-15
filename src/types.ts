@@ -44,9 +44,10 @@ export interface Phone {
 export enum Progression {
     None,
     VenezuelaMode,
+    PostVenezuela,
 }
 export const MinTaxProgression = Progression.VenezuelaMode
-export const VzPriceMul = 14_999n
+export const VzPriceMul = 16n
 export interface UserData {
     money: Money,
     multipliers: bigint[],

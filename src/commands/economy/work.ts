@@ -16,7 +16,7 @@ export default {
         let gold = (BigInt(Math.floor(Math.random() * 6)) + u.workBonus / 8n) * mul
         u.money.points += points
         u.money.gold += gold
-        if (u.progression >= MinTaxProgression) u.taxes += (points * (BigInt(u.progression) + 1n) / 10n);
+        if (u.progression >= MinTaxProgression) u.taxes += (points * (BigInt(u.progression) + 1n) / 8n);
         await msg.reply(`Earned ${moneyFormat(points)} and ${moneyFormat(gold, "gold")}`)
     }
 } as Command

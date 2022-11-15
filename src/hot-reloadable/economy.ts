@@ -65,6 +65,7 @@ export interface ItemTypeData {
     minProgress?: Progression,
     vzOnly?: boolean,
     attributes?: Collection<string, unknown | ItemAttributeData>,
+    lore?: string,
     onUse?: (u: UserData, a: bigint, type: ItemType) => [bigint, string] | void
 }
 interface ItemAttributeData {
@@ -93,10 +94,9 @@ class ItemAttribute {
             case ItemAttributeType.Multiplier:
                 return (this.value as bigint[][]).map((v, i) => ({
                     i,
-                    base: v[0],
-                    factors: v.slice(1).map((j, c) => ({ div: 2n ** BigInt(c + 1), value: j })).filter(v => v.value > 0n),
-                })).filter(v => v.base > 0n || v.factors.some(f => f.value > 0n)).map(v =>
-                    `M[${v.i}] += ${[format(v.base), ...v.factors.map(e => formatFraction([e.value, e.div]))].join(" + ")}`).join(", ")
+                    factors: v,
+                })).filter(v => v.factors.some(f => f > 0n)).map(v =>
+                    `M[${v.i}] += ${formatFraction(getPartialFrac(v.factors))}`).join(", ")
             case ItemAttributeType.GenericPartial:
                 return `${formatFraction(getPartialFrac(this.value as bigint[]))}`
             case ItemAttributeType.TaxEvasion:
@@ -311,8 +311,29 @@ const progressionMessages: { [x in Progression]: string } = {
     [Progression.None]: "How did you even get this message?",
 
     [Progression.VenezuelaMode]:
-        "You have enabled Venezuela Mode for the first time, be prepared for significantly higher item prices and pain." +
-        " On the plus side, you've unlocked some new items on the shop"
+        "You have enabled Venezuela Mode for the first time. Be prepared for significantly higher item prices and pain." +
+        "On the plus side, you've unlocked some new items on the shop.",
+    [Progression.PostVenezuela]:
+        "You have disabled Venezuela Mode. Prices have dropped back to normal and new items have been unlocked."
+}
+const progressionInfo: { [x in Progression]: { title: string, description: string } } = {
+    [Progression.None]: {
+        title: "The Start",
+        description: "...",
+    },
+    [Progression.VenezuelaMode]: {
+        title: "Venezuela",
+        description: `Venezuela Mode is now active. Item prices are now ${(VzPriceMul * 100n) - 100n}% higher`,
+    },
+    [Progression.PostVenezuela]: {
+        title: "Post-Venezuela",
+        description: "",
+    }
+}
+function getUnlockedItems(prev: Progression, cur: Progression) {
+    let prevUnlock = items.filter(v => v.minProgress <= prev)
+    let unlock = items.filter(v => v.minProgress <= cur)
+    return unlock.difference(prevUnlock)
 }
 export default {
     getUser,
@@ -330,4 +351,6 @@ export default {
     rarities,
     progressionMessages,
     ItemAttributeType,
+    progressionInfo,
+    getUnlockedItems,
 }

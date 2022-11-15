@@ -32,6 +32,11 @@ export default {
             if (u.progression < Progression.VenezuelaMode) u.progression = Progression.VenezuelaMode
             u.vzMode = true
         },
+        the_chair: (u: UserData, a: bigint) => {
+            if (!u.vzMode) return [0n]
+            u.vzMode = false;
+            if (u.progression < Progression.PostVenezuela) u.progression = Progression.PostVenezuela
+        },
         car: (u: UserData, a: bigint, type: ItemType) => {
             let workAttr = type.attributes.get("workBonus")
             let evasionAttr = type.attributes.get("taxEvasion")

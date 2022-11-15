@@ -1,13 +1,13 @@
-import { Message } from "discord.js";
+import { EmbedBuilder, Message } from "discord.js";
 import { getHotReloadable } from "../loader.js";
-import { eco } from "../util.js";
+import { eco, itemString } from "../util.js";
 
 const prefix = ";"
 
 async function handleCommand(msg: Message) {
     let hr = getHotReloadable()
     let { parseCommand, convertArgs } = hr.commands
-    let { getUser, progressionMessages } = hr.eco
+    let { getUser, progressionMessages, progressionInfo, getUnlockedItems } = hr.eco
     let u = await getUser(msg.author)
     let prevTaxes = u.taxes
     let progress = u.progression
@@ -19,9 +19,19 @@ async function handleCommand(msg: Message) {
     console.log(converted)
     await cmd.run(msg, ...converted)
     if (u.progression > progress) {
-        await msg.reply(progressionMessages[u.progression])
+        let unlocks = getUnlockedItems(progress, u.progression)
+        let info = progressionInfo[u.progression]
+        let embed = new EmbedBuilder()
+            .setTitle(`Progression: ${info.title}`)
+            .setDescription(info.description)
+        if (unlocks.size > 0) {
+            embed.addFields({ name: "Items Unlocked", value: unlocks.map((_, k) => itemString(k)).join("\n") })
+        }
+        await msg.reply({
+            embeds: [embed]
+        })
     }
-    if (u.taxes > prevTaxes && u.taxes >= u.money.points / 4n) {
+    if (u.taxes > prevTaxes && u.taxes >= u.money.points / 8n) {
         await msg.reply(`Pay your taxes.`)
     }
 }

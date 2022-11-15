@@ -172,12 +172,16 @@ export function eco(): typeof hotReloadable.eco {
 }
 let numberRegex = /^(\d+)(.\d+)?([a-zA-Z]*)/
 export function bigintAbbr(str: string): bigint | null {
+    let mul = 1n
+    if (str.startsWith("-")) {
+        mul = -1n
+        str = str.slice(1)
+    }
     let match = str.match(numberRegex)
     if (!match?.[1]) return null
     let base = BigInt(match[1]) * 1000n
     let decimal = 0n
     if (match?.[2]) decimal = BigInt(match[2].slice(1, 4).padEnd(3, "0"))
-    let mul = 1n
     if (match[3]) mul = formatsBigint.find(v => v.suffix.trim() == match?.[3])?.min || 1n
     return (base + decimal) * mul / 1000n
 }
@@ -222,7 +226,7 @@ export function getPartialValue(v: bigint[], a: bigint = 1n) {
     return v.reduce((prev, cur, i) => prev + (cur * a) / (2n ** BigInt(i)), 0n)
 }
 
-export function getPartialFrac(v: bigint[], am: bigint = 1n, scale: bigint = 20n): BigIntFraction {
+export function getPartialFrac(v: bigint[], am: bigint = 1n, scale: bigint = 64n): BigIntFraction {
     let a = 0n, b = 0n
     let value = getPartialValue(v, am * scale)
     a = value
