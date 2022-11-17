@@ -1,5 +1,5 @@
 import { Progression, UserData } from "../types.js";
-import { eco, getPartialValue } from "../util.js";
+import { BigIntFraction, eco, getFracValue, getPartialValue } from "../util.js";
 import { ItemType } from "./economy.js";
 let { addMul } = eco()
 
@@ -8,14 +8,9 @@ export default {
         generic_multiplier: (u: UserData, a: bigint, type: ItemType) => {
             let mulAttr = type.attributes.get("multiplier")
             if (!mulAttr) return [0n, "..."]
-            let mul = mulAttr.value as bigint[][];
-            /*
-                Divide By |     1  2  4, 8      1  2  4, 8
-                Multiplier: [ [ 2, 0, 2, 8 ], [ 0, 1, 0, 0 ] ]
-            */
+            let mul = mulAttr.value as BigIntFraction[]
             for (let i = 0; i < mul.length; i++) {
-                let total = getPartialValue(mul[i], a);
-                console.log(`multiplier[${i}]: +${total}`)
+                let total = getFracValue(mul[i], a);
                 addMul(u, i, total);
             }
         },
@@ -41,8 +36,8 @@ export default {
             let workAttr = type.attributes.get("workBonus")
             let evasionAttr = type.attributes.get("taxEvasion")
             if (!workAttr || !evasionAttr) return [0n, "..."]
-            u.workBonus += getPartialValue(workAttr.value as bigint[], a)
-            u.taxevasion = evasionAttr.value as number
+            u.workBonus += getFracValue(workAttr.value as BigIntFraction, a)
+            u.taxEvasion = evasionAttr.value as number
         }
     }
 }

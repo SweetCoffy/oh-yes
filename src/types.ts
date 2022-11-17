@@ -1,19 +1,16 @@
-import { Collection, Message, User } from "discord.js"
+import { Client, Collection, Message, User } from "discord.js"
+import { CurrencyID } from "./util"
 
 interface CommandBaseArg {
-    type: string,
     name: string,
     required: boolean,
 }
-type CommandStringArg = CommandBaseArg & { type: "string" }
-type CommandNumberArg = CommandBaseArg & { type: "number" }
+type CommandDefaultArg = CommandBaseArg & { type: "string" | "number" | "bigint" | "currency" | "boolean" }
 type CommandUserArg = CommandBaseArg & { type: "user", errorIfMissing?: boolean }
-type CommandBigintArg = CommandBaseArg & { type: "bigint" }
-type CommandCurrencyArg = CommandBaseArg & { type: "currency" }
 type CommandChoiceArg = CommandBaseArg & { type: "enum", enum: object }
-type RestArg = CommandBaseArg & { name: `...${string}`, minCount?: number, maxCount?: number }
-export type CommandArgTypes = CommandStringArg | CommandNumberArg | CommandUserArg | CommandBigintArg | CommandCurrencyArg | CommandChoiceArg
-export type CommandArg = (CommandArgTypes & RestArg) | CommandArgTypes
+type CommandCustomArg = CommandBaseArg & { type: ArgType }
+export type CommandArgTypes = CommandDefaultArg | CommandUserArg | CommandChoiceArg | CommandCustomArg
+export type CommandArg = CommandArgTypes
 interface BaseCommand {
     name: string,
     aliases?: string[],
@@ -26,44 +23,59 @@ interface BaseCommand {
     isSubcommandGroup?: boolean,
     _group?: SubcommandGroup,
     groupName?: string,
+    precondition?: (msg: Message) => Promise<boolean>
     run: (msg: Message, ...args: any[]) => Promise<any>
 }
 export type SubcommandGroup = BaseCommand & { isSubcommandGroup: true, default?: Command, commands: Collection<string, Command>, _lookup: Collection<string, string> }
 export type Command = SubcommandGroup | BaseCommand
-interface Component { type: string }
-type CPU = Component
-type GPU = Component
-export interface Computer {
-    cpu: CPU,
-    slots: number,
-    gpus: GPU[],
-}
 export interface Phone {
-
+    orderQueue: { item: string, amount: bigint }[],
+    orderPaused: boolean,
+    tier: bigint,
 }
 export enum Progression {
-    None,
-    VenezuelaMode,
-    PostVenezuela,
+    None = 0,
+    VenezuelaMode = 1,
+    PostVenezuela = 2,
+    TheEnd = 9999,
 }
 export const MinTaxProgression = Progression.VenezuelaMode
 export const VzPriceMul = 16n
+export const PhoneMaxBonusDiscount = 90n
+export const PhoneMaxTier = 50n
 export interface UserData {
     money: Money,
     multipliers: bigint[],
     items: { [x: string]: bigint | undefined },
     workBonus: bigint,
     aliases: NodeJS.Dict<string>,
-    phone?: Phone,
-    computer?: Computer,
+    phone: Phone,
     vzMode: boolean,
     taxes: bigint,
     progression: Progression,
-    taxevasion: number,
+    taxEvasion: number,
     evadedTaxes: number,
 }
-export type CurrencyID = "points" | "gold" | "sus"
 export type Money = {
     [x in CurrencyID]: bigint
 }
 export type OptionalMoney<T = bigint> = { [x in CurrencyID]?: T }
+
+export class ArgType<T = any> {
+    name: string
+    _parse: (v: any, arg: CommandArg) => T = (v) => v as T
+    _convert?: (v: any, arg: CommandArg, client: Client) => Promise<T>
+    constructor(name: string, parse?: typeof ArgType.prototype._parse, convert?: typeof ArgType.prototype._convert) {
+        this.name = name;
+        if (!parse && !convert) throw new Error(`Type '${name}' must have at least a 'parse' or 'convert' method.`)
+        if (parse) this._parse = parse
+        this._convert = convert
+    }
+    parse(v: any, arg: CommandArg) {
+        return this._parse(v, arg)
+    }
+    async convert(v: any, arg: CommandArg, client: Client): Promise<T> {
+        if (!this._convert) return v;
+        return await this._convert(v, arg, client)
+    }
+}

@@ -6,6 +6,7 @@ trophy:
     points: !bigint 1000000000
     gold: !bigint 1000000
   description: "Doubles money gained from work"
+  lore: "You won!"
   rarity: !rarity Epic
   unique: true
   category: utility
@@ -19,16 +20,17 @@ gambling_pass:
   rarity: !rarity Legendary
   unique: true
   category: utility
-  description: "Enables gambling"
+  description: "Enables gambling."
 
 phone:
   name: Phone
   icon: 📱
   price: 
-    points: !bigint 1000000000
+    points: !bigint 100000
   rarity: !rarity Unique
   category: utility
-  description: "Grants a 5% discount for all items in the shop"
+  description: "- Grants an ugpradeable discount on all items, starting at 5%.\n- Grants access to the `phone` command group"
+  lore: "You will own nothing and be happy."
   unique: true
 
 suspicious_developer_item:
@@ -36,5 +38,7 @@ suspicious_developer_item:
   icon: 🐛
   rarity: !rarity Unique
   category: utility
+  description: "Makes every item in the shop free, used for debugging purposes."
+  lore: "You're not supposed to have this item."
   unique: true
   unlisted: true

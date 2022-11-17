@@ -1,5 +1,5 @@
-import { Command, CurrencyID } from "../../types.js";
-import { allMoneyFormat, Currency, getUser, moneyFormat } from "../../util.js";
+import { Command } from "../../types.js";
+import { allMoneyFormat, Currency, CurrencyID, getUser, moneyFormat } from "../../util.js";
 
 export default {
     name: "gamble",

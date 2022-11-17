@@ -1,5 +1,5 @@
 import { commands, lookup } from "../loader.js";
-import { Command, CommandArg, SubcommandGroup } from "../types";
+import { ArgType, Command, CommandArg, SubcommandGroup } from "../types.js";
 import { Client, Collection } from "discord.js"
 import { bigintAbbr, getUser } from "../util.js";
 
@@ -97,6 +97,8 @@ async function convertArgs(args: any[], cmdArgs: CommandArg[], client: Client): 
                 if (arg.errorIfMissing) throw err
                 return null
             }
+        } else if (arg.type instanceof ArgType) {
+            return await arg.type.convert(v, arg, client)
         }
         return v;
     }

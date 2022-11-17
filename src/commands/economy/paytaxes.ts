@@ -11,9 +11,9 @@ export default {
         if (u.money.points < u.taxes) return await msg.reply(`No money?`)
         // Tax evasion
         let evasionChance = 0.01
-        if (u.taxevasion > 0) {
+        if (u.taxEvasion > 0) {
             evasionChance = 1
-            u.taxevasion--
+            u.taxEvasion--
         }
         if (Math.random() < evasionChance) {
             u.taxes = 0n

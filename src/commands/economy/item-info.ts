@@ -7,7 +7,7 @@ export default {
     description: "b",
     args: [{ type: "string", name: "item", required: true }],
     async run(msg, item: string) {
-        let { items } = getHotReloadable().eco
+        let { items, ItemAttributeType } = getHotReloadable().eco
         let u = await getUser(msg.author);
         let it = items.get(item)
         if (!it) return await msg.reply("No.")
@@ -29,7 +29,7 @@ export default {
                     },
                     {
                         name: "Attributes",
-                        value: it.attributes.map(el => `${el.name} (Key \`${el.key}\`, Type ${el.type}, ${typeof el.value})`).join("\n") || "None",
+                        value: it.attributes.map(el => `${el.name} (Key \`${el.key}\`, Type ${ItemAttributeType[el.type]}, ${typeof el.value})`).join("\n") || "None",
                         inline: true,
                     },
                     ...it.attributes.map((attr) => ({ name: `${attr.name}`, value: attr.toString(true), inline: true }))

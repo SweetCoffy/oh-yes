@@ -8,7 +8,7 @@ cookie:
   category: consumable
   description: "Increases multiplier[0] by 1/128 per item (rounded down)"
   attributes:
-    multiplier: [[!bigint 0, !bigint 0, !bigint 0, !bigint 0, !bigint 0, !bigint 0, !bigint 0, !bigint 1]]
+    multiplier: [!fraction "1/128"]
   onUse: !function
     from: 'yamlFuncs.item.generic_multiplier'
 
@@ -21,7 +21,7 @@ bread:
   category: "consumable"
   description: "Increases multiplier[0] by 1/4 per item (rounded down)"
   attributes:
-    multiplier: [[!bigint 0, !bigint 0, !bigint 1]]
+    multiplier: [!fraction "1/4"]
   onUse: !function
     from: 'yamlFuncs.item.generic_multiplier'
 
@@ -34,7 +34,7 @@ baguette:
   category: "consumable"
   description: "Increases multiplier[0] by 1/2 per item (rounded down)"
   attributes:
-    multiplier: [[!bigint 0, !bigint 1]]
+    multiplier: [!fraction "1/2"]
   onUse: !function
     from: 'yamlFuncs.item.generic_multiplier'
 
@@ -48,7 +48,7 @@ spaghet:
   category: "consumable"
   description: "Increases multiplier[0] by 1 per item"
   attributes:
-    multiplier: [[!bigint 1]]
+    multiplier: [!fraction 1]
   onUse: !function
     from: 'yamlFuncs.item.generic_multiplier'
 
@@ -62,7 +62,7 @@ moon_cake:
   category: "consumable"
   description: "Increases multiplier[0] by 2.25 per item"
   attributes:
-    multiplier: [[!bigint 2, !bigint 0, !bigint 1]]
+    multiplier: [!fraction "2 + 1/4"]
   onUse: !function
     from: 'yamlFuncs.item.generic_multiplier'
 
@@ -75,7 +75,7 @@ avocado:
   category: "consumable"
   description: "Increases multiplier[0] by 7.25 and multiplier[1] by 0.0625 per item"
   attributes:
-    multiplier: [[!bigint 7, !bigint 0, !bigint 1], [!bigint 0, !bigint 0, !bigint 0, !bigint 0, !bigint 1]]
+    multiplier: [!fraction "7 + 1/4", !fraction "1/16"]
   onUse: !function
     from: 'yamlFuncs.item.generic_multiplier'
 
@@ -89,7 +89,7 @@ egg:
   rarity: !rarity Epic
   category: "consumable"
   attributes:
-    multiplier: [[!bigint 500000]]
+    multiplier: [!fraction 500000]
   onUse: !function
     from: 'yamlFuncs.item.generic_multiplier'
 
@@ -103,7 +103,7 @@ milk:
   vzOnly: true
   description: "Increases multiplier[1] by 1 per item"
   attributes:
-    multiplier: [[!bigint 0], [!bigint 1]]
+    multiplier: [!fraction 0, !fraction 1]
   onUse: !function
     from: 'yamlFuncs.item.generic_multiplier'
 
@@ -136,12 +136,12 @@ car:
   icon: 🚗
   price: 
     points: !bigint 100000000
-  description: "Increases Work Bonus by 1.5 per item\nGuarantees evading taxes once"
+  description: "Increases Work Bonus by 1 + 1/2 per item\nGuarantees evading taxes once"
   rarity: !rarity Legendary
   category: consumable
   minProgress: !progression VenezuelaMode
   attributes:
-    workBonus: [!bigint 1, !bigint 1]
+    workBonus: !fraction "1 + 1/2"
     evadeTaxes: 1
   onUse: !function
     from: 'yamlFuncs.item.car'

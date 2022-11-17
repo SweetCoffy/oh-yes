@@ -4,11 +4,8 @@ import { join } from "path";
 import { formats, formatsBigint } from "./formats.js";
 import hotReloadable from "./hot-reloadable.js";
 import { getHotReloadable } from "./loader.js";
-import { CurrencyID, Money, OptionalMoney, UserData } from "./types";
+import { Money, OptionalMoney, UserData } from "./types";
 
-export function getMul(user: UserData) {
-    return user.multipliers.reduce((prev, cur) => prev * cur, 1n)
-}
 export const CurrencyIcons: { [x in CurrencyID]: string } = {
     points: "ᵢₚ",
     gold: "¤",
@@ -18,6 +15,11 @@ export enum Currency {
     points = "points",
     gold = "gold",
     sus = "sus",
+}
+export type CurrencyID = keyof typeof Currency
+
+export function getMul(user: UserData) {
+    return user.multipliers.reduce((prev, cur) => prev * cur, 1n)
 }
 export function allMoneyFormat(m: OptionalMoney) {
     //@ts-ignore
@@ -185,13 +187,6 @@ export function bigintAbbr(str: string): bigint | null {
     if (match[3]) mul = formatsBigint.find(v => v.suffix.trim() == match?.[3])?.min || 1n
     return (base + decimal) * mul / 1000n
 }
-export function phoneOnly(fn: (m: Message, ...args: any[]) => any) {
-    return async function (m: Message, ...args: any[]): Promise<any> {
-        let info = await getUser(m.author)
-        if (!info.items.phone) return await m.reply(`You need a phone in order to use this command`)
-        return fn(m, ...args)
-    }
-}
 export function splitCamelCase(str: string) {
     let regex = /(?<=[a-z])(?=[A-Z])/g
     return str.split(regex)
@@ -200,6 +195,9 @@ export function titleCase(str: string | string[]) {
     let words = Array.isArray(str) ? str : str.split(" ")
     return words.map(v => v[0].toUpperCase() + v.slice(1).toLowerCase()).join(" ")
 }
+/**
+ * Returns the GCD (Greatest Common Divisor) of `a` and `b`
+ */
 export function gcd(a: bigint, b: bigint) {
     while (b != 0n) {
         let t = b
@@ -207,6 +205,12 @@ export function gcd(a: bigint, b: bigint) {
         a = t
     }
     return a
+}
+/**
+ * Returns the LCM (Least Common Multiple) of `a` and `b`
+ */
+export function lcm(a: bigint, b: bigint) {
+    return a * b / gcd(a, b)
 }
 export function simplifyFrac([a, b]: BigIntFraction): BigIntFraction {
     let g = gcd(a, b)
@@ -233,9 +237,82 @@ export function getPartialFrac(v: bigint[], am: bigint = 1n, scale: bigint = 64n
     b = am * scale
     return simplifyFrac([a, b])
 }
+export function getFracValue([a, b]: BigIntFraction, x: bigint = 1n) {
+    return a * x / b
+}
 export function xTimes(v: number | bigint) {
     if (v == 1) return "once"
     if (v == 2) return "twice"
     if (v == 3) return "twice"
     return `${v} times`
 }
+export function nth(v: number | bigint) {
+    let str = v.toString();
+    if (str.endsWith("1")) return `${str}st`
+    if (str.endsWith("2")) return `${str}nd`
+    if (str.endsWith("3")) return `${str}rd`
+    return `${str}th`
+}
+export function addFracs(...fracs: BigIntFraction[]) {
+    if (fracs.length == 1) return fracs[0]
+    if (fracs.length == 2) {
+        let [a, b] = fracs;
+        return simplifyFrac([a[0] * b[1] + b[0] * a[1], a[1] * b[1]])
+    }
+    // If it works, it works.
+    let fr = [0n, 1n] as BigIntFraction
+    for (let frac of fracs) {
+        fr = addFracs(fr, frac)
+    }
+    return simplifyFrac(fr);
+}
+export function clamp(x: bigint, min: bigint, max: bigint) {
+    if (x < min) return min;
+    if (x > max) return max;
+    return x
+}
+export function getDiscount(tier: bigint) {
+    return 5n + clamp(tier * 45n / 15n, 0n, 45n)
+}
+export function getUpgradeCost(tier: bigint) {
+    return (50000n + (tier * 95000n)) - 1n
+}
+export const BooleanEnum = Object.freeze({
+    yes: true,
+    on: true,
+    true: true,
+
+    no: false,
+    off: false,
+    false: false,
+})
+export function max(...args: bigint[]) {
+    if (args.length == 0) return 0n
+    let highest: bigint | null = null
+    for (let v of args) {
+        if (highest == null || v > highest) highest = v
+    }
+    return highest as bigint;
+}
+export function min(...args: bigint[]) {
+    if (args.length == 0) return 0n
+    let lowest: bigint | null = null
+    for (let v of args) {
+        if (lowest == null || v < lowest) lowest = v
+    }
+    return lowest as bigint;
+}
+export function enumeration(...args: any[]) {
+    if (args.length == 0) return ""
+    if (args.length == 1) return args[0]
+    let e = args.slice(0, -1).join(", ")
+    return e + " and " + args[args.length - 1]
+}
+export function lcmArray(...args: bigint[]) {
+    if (args.length < 2) return args[0] ?? 0n
+    let v = lcm(args.shift() as bigint, args.shift() as bigint)
+    for (let n of args) {
+        v = lcm(v, n)
+    }
+    return v;
+} 

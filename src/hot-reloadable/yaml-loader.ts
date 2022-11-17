@@ -1,6 +1,6 @@
 import { load, DEFAULT_SCHEMA, Schema, Type } from "js-yaml"
 import { readFile, readdir } from "fs/promises"
-import { eco, rarities, Rarity, readdirR } from "../util.js"
+import { addFracs, BigIntFraction, eco, rarities, Rarity, readdirR, simplifyFrac } from "../util.js"
 import { ItemTypeData } from "./economy.js";
 import { join } from "path";
 import { Progression } from "../types.js";
@@ -35,6 +35,30 @@ const customSchema = DEFAULT_SCHEMA.extend([
         construct: data => BigInt(data),
         represent: value => value + "",
         instanceOf: (v: any) => typeof v == "bigint"
+    }),
+    new Type("!fraction", {
+        kind: "scalar",
+        resolve(data: string) {
+            try {
+                this.construct?.(data)
+                return true
+            }
+            catch { return false }
+        },
+        construct: (data: string) => {
+            let addSplit = data.split("+").map(el => el.trim())
+            if (!addSplit[0]) throw new Error(`!fraction must have at least one number`)
+            return addFracs(...addSplit.map(e => {
+                let frac = e.split("/").map(e => e.trim()).map(BigInt);
+                if (frac.length < 2) frac[1] = 1n
+                return frac as BigIntFraction
+            }))
+        },
+        represent: (value) => {
+            let v = value as BigIntFraction
+            return `${v[0]}/${v[1]}`
+        },
+        instanceOf: () => false,
     }),
     new Type("!rarity", {
         kind: "scalar",
@@ -76,7 +100,6 @@ async function loadFile(path: string) {
             continue
         }
         let val = type.getValue(o, k)
-        console.log(val)
         type.map.set(k, val)
         console.log(`Added '${k}'`)
     }

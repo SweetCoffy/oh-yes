@@ -7,7 +7,7 @@ const prefix = ";"
 async function handleCommand(msg: Message) {
     let hr = getHotReloadable()
     let { parseCommand, convertArgs } = hr.commands
-    let { getUser, progressionMessages, progressionInfo, getUnlockedItems } = hr.eco
+    let { getUser, progressionInfo, getUnlockedItems } = hr.eco
     let u = await getUser(msg.author)
     let prevTaxes = u.taxes
     let progress = u.progression
@@ -15,6 +15,7 @@ async function handleCommand(msg: Message) {
     if (!d) return msg.reply(`Bruh`)
     let { command: cmd, args } = d
     if (cmd.devOnly && msg.author.id != "602651056320675840") return await msg.reply("Bruh")
+    if (cmd.precondition && !(await cmd.precondition(msg))) return
     let converted = await convertArgs(args, cmd.args, msg.client)
     console.log(converted)
     await cmd.run(msg, ...converted)

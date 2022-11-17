@@ -2,8 +2,8 @@ import { Collection, User } from "discord.js";
 import { existsSync } from "fs";
 import { readFile, writeFile } from "fs/promises";
 import { getData } from "../data.js";
-import { CurrencyID, Money, OptionalMoney, Progression, UserData, VzPriceMul } from "../types.js";
-import { allMoneyFormat, divideMoney, formatNumber, multiplyMoney, format, formatFraction, titleCase, splitCamelCase, getPartialFrac, xTimes } from "../util.js";
+import { Money, OptionalMoney, PhoneMaxTier, Progression, UserData, VzPriceMul } from "../types.js";
+import { allMoneyFormat, divideMoney, formatNumber, multiplyMoney, format, formatFraction, titleCase, splitCamelCase, getPartialFrac, xTimes, BigIntFraction, getDiscount, max, enumeration, lcmArray } from "../util.js";
 
 enum Rarity {
     Junk = 0,
@@ -92,13 +92,16 @@ class ItemAttribute {
             case ItemAttributeType.Money:
                 return allMoneyFormat(this.value as OptionalMoney)
             case ItemAttributeType.Multiplier:
-                return (this.value as bigint[][]).map((v, i) => ({
+                let f = this.value as BigIntFraction[];
+                let lcm = lcmArray(...f.map(el => el[1]))
+                if (long) return `${this.toString(false)}\nBest value when using multiples of: ${lcm}`
+                if (!long) return (this.value as bigint[][]).map((v, i) => ({
                     i,
-                    factors: v,
-                })).filter(v => v.factors.some(f => f > 0n)).map(v =>
-                    `M[${v.i}] += ${formatFraction(getPartialFrac(v.factors))}`).join(", ")
-            case ItemAttributeType.GenericPartial:
-                return `${formatFraction(getPartialFrac(this.value as bigint[]))}`
+                    frac: v as BigIntFraction,
+                })).filter(v => v.frac[0] > 0n).map(v =>
+                    `M[${v.i}] += ${formatFraction(v.frac)}`).join(", ")
+            case ItemAttributeType.GenericFraction:
+                return `${formatFraction(this.value as BigIntFraction)}`
             case ItemAttributeType.TaxEvasion:
                 let e = this.value as number
                 return e > 0 ? `Yes (${xTimes(e)})` : `No`
@@ -113,18 +116,18 @@ class ItemAttribute {
         this.value = data.value;
     }
 }
-enum ItemAttributeType {
+export enum ItemAttributeType {
     Default,
     Money,
     BigInt,
     Multiplier,
-    GenericPartial,
+    GenericFraction,
     TaxEvasion,
 }
 let attrNameTypeMap: NodeJS.Dict<ItemAttributeType> = {
     multiplier: ItemAttributeType.Multiplier,
     price: ItemAttributeType.Money,
-    workBonus: ItemAttributeType.GenericPartial,
+    workBonus: ItemAttributeType.GenericFraction,
     evadeTaxes: ItemAttributeType.TaxEvasion,
 }
 export interface ItemType extends ItemTypeData { }
@@ -253,14 +256,22 @@ async function getUser(user: User): Promise<UserData> {
         vzMode: false,
         taxes: 0n,
         progression: 0,
-        taxevasion: 0,
+        taxEvasion: 0,
         evadedTaxes: 0,
+        ...o,
+        // Phone info is always present regardless of whether or not the user has a phone
         phone: {
-
+            orderPaused: false,
+            orderQueue: [],
+            tier: 0n,
             ...(o?.phone || {}),
         },
-        ...o,
-        money: { points: o?.money?.points ?? 3000n, gold: o?.money?.gold ?? 150n, sus: o?.money?.sus ?? 0n },
+        money: {
+            points: 3000n,
+            gold: 150n,
+            sus: 0n,
+            ...(o?.money || {}),
+        }
     }
     users.set(user.id, obj)
     return obj
@@ -290,7 +301,7 @@ function getPrice(item: string, u: UserData, amount: bigint): OptionalMoney {
     let ml = 1n
     if (u.vzMode) ml *= VzPriceMul
     let price = multiplyMoney(info.price, amount * ml)
-    if (u.items.phone) price = divideMoney(multiplyMoney(price, 95n), 100n)
+    if (u.items.phone) price = divideMoney(multiplyMoney(price, 100n - getDiscount(u.phone.tier)), 100n)
     return price
 }
 /**
@@ -306,28 +317,27 @@ function itemAvailable(item: string, u: UserData): boolean {
     if (info.minProgress > u.progression) return false
     return true
 }
-const progressionMessages: { [x in Progression]: string } = {
-    // Should never happen, but it's still here just in case (and so that VS Code doesn't yell at me for not including it)
-    [Progression.None]: "How did you even get this message?",
-
-    [Progression.VenezuelaMode]:
-        "You have enabled Venezuela Mode for the first time. Be prepared for significantly higher item prices and pain." +
-        "On the plus side, you've unlocked some new items on the shop.",
-    [Progression.PostVenezuela]:
-        "You have disabled Venezuela Mode. Prices have dropped back to normal and new items have been unlocked."
-}
-const progressionInfo: { [x in Progression]: { title: string, description: string } } = {
+const progressionInfo: { [x in Progression]: { title: string, description: string, maxPhoneTier: bigint } } = {
     [Progression.None]: {
         title: "The Start",
         description: "...",
+        maxPhoneTier: 1n,
     },
     [Progression.VenezuelaMode]: {
         title: "Venezuela",
-        description: `Venezuela Mode is now active. Item prices are now ${(VzPriceMul * 100n) - 100n}% higher`,
+        description: `Venezuela Mode has been activated for the first time. Item prices will be ${(VzPriceMul * 100n) - 100n}% higher while activated. (Oh yeah, taxes exist now.)`,
+        maxPhoneTier: 5n,
     },
     [Progression.PostVenezuela]: {
         title: "Post-Venezuela",
-        description: "",
+        description: "Venezuela Mode has been deactivated for the first time and item prices are back to normal. However, some items will only be available while Venezuela Mode is activated",
+        maxPhoneTier: 15n,
+    },
+    // There are more stages to come in between these two, but I decided to add this here anyways.
+    [Progression.TheEnd]: {
+        title: "The End",
+        description: "How did you even-",
+        maxPhoneTier: PhoneMaxTier,
     }
 }
 function getUnlockedItems(prev: Progression, cur: Progression) {
@@ -349,7 +359,6 @@ export default {
     // GPUItemType,
     Rarity: Rarity,
     rarities,
-    progressionMessages,
     ItemAttributeType,
     progressionInfo,
     getUnlockedItems,
