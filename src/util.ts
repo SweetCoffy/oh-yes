@@ -275,7 +275,7 @@ export function getDiscount(tier: bigint) {
     return 5n + clamp(tier * 45n / 15n, 0n, 45n)
 }
 export function getUpgradeCost(tier: bigint) {
-    return (50000n + (tier * 95000n)) - 1n
+    return (100000n + ((8n ** tier) * 10000n)) - 1n
 }
 export const BooleanEnum = Object.freeze({
     yes: true,
