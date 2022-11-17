@@ -2,6 +2,7 @@ DefaultType: ItemType
 
 cookie:
   name: Cookie
+  icon: 🍪
   price: 
     points: !bigint 10
   rarity: !rarity Junk
