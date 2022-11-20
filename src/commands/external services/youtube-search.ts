@@ -4,7 +4,7 @@ export default {
     name: "youtube-search",
     aliases: ["yt", "yt-search", "youtube"],
     description: "Searches for a video on youtube",
-    args: [{ name: "...terms", type: "string", required: true, minCount: 1 }],
+    args: [{ name: "...terms", type: "string", required: true }],
     async run(msg, terms: string[]) {
         await msg.react('🔍')
         let query = terms.join(" ")
