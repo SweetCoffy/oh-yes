@@ -201,41 +201,9 @@ export class ItemType {
         }
     }
 }
-// class ComputerComponentItemType extends ItemType {
-//     perf: number
-//     constructor(name: string, icon: string, obj: ItemTypeData & { perf: number }) {
-//         super(name, icon, obj)
-//         this.perf = obj.perf
-//     }
-// }
-// class CPUItemType extends ComputerComponentItemType { }
-// class GPUItemType extends ComputerComponentItemType { }
+
 let users: Collection<string, WrappedUserData> = new Collection()
 let items: Collection<string, ItemType> = new Collection()
-
-// items.set("intol_xeson_get_real", new CPUItemType("Intol™ Xeson© Get Real", "<:intolxesongetreal:980699295084871700>", {
-//     perf: 5,
-//     rarity: rarity.LEGENDARY,
-//     price: { points: 69_000n }
-// }))
-// items.set("raeon_titan_42069fx_rush_2", new GPUItemType("Raeon© Titan 42069fx Rush 2", "<:raeon42069fxrush2:980699296196362300>", {
-//     perf: 6,
-//     rarity: rarity.LEGENDARY,
-//     price: { points: 420_690n }
-// }))
-
-// items.set("intol_pentsus_real", new CPUItemType("Intol™ Pentsus© Real", "⬛", {
-//     perf: 0.1,
-//     rarity: rarity.RARE_PLUS,
-//     description: "A \"Cutting Edge\" Pentsus Processor",
-//     price: { points: 5000n },
-// }))
-// items.set("nved_force_1_h", new GPUItemType("NVed™ Force 1 H", "⬛", {
-//     perf: 0.11,
-//     rarity: rarity.RARE_PLUS,
-//     description: "Barely any better than integrated graphics",
-//     price: { points: 7500n },
-// }))
 
 items.sort((a, b, ak, bk) => Number(Object.values(b.price).reduce((prev, cur) => prev + cur, 0n) -
     Object.values(a.price).reduce((prev, cur) => prev + cur, 0n)))
@@ -358,9 +326,6 @@ export default {
     getPrice,
     itemAvailable,
     ItemType,
-    // ComputerComponentItemType,
-    // CPUItemType,
-    // GPUItemType,
     Rarity: Rarity,
     rarities,
     ItemAttributeType,
