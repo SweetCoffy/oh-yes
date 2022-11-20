@@ -7,7 +7,7 @@ cookie:
     points: !bigint 10
   rarity: !rarity Junk
   category: consumable
-  description: "Increases multiplier[0] by 1/128 per item (rounded down)"
+  description: "Increases multiplier[0] by 1\u2044128 per item (rounded down)"
   attributes:
     multiplier: [!fraction "1/128"]
   onUse: !function
@@ -20,7 +20,7 @@ bread:
     points: !bigint 300
   rarity: !rarity Common
   category: "consumable"
-  description: "Increases multiplier[0] by 1/4 per item (rounded down)"
+  description: "Increases multiplier[0] by 1\u20444 per item (rounded down)"
   attributes:
     multiplier: [!fraction "1/4"]
   onUse: !function
@@ -33,7 +33,7 @@ baguette:
     points: !bigint 500
   rarity: !rarity Common
   category: "consumable"
-  description: "Increases multiplier[0] by 1/2 per item (rounded down)"
+  description: "Increases multiplier[0] by 1\u20442 per item (rounded down)"
   attributes:
     multiplier: [!fraction "1/2"]
   onUse: !function
@@ -61,7 +61,7 @@ moon_cake:
     gold: !bigint 50
   rarity: !rarity Uncommon
   category: "consumable"
-  description: "Increases multiplier[0] by 2.25 per item"
+  description: "Increases multiplier[0] by 2 + 1\u20444 per item"
   attributes:
     multiplier: [!fraction "2 + 1/4"]
   onUse: !function
@@ -74,7 +74,7 @@ avocado:
     points: !bigint 6499
   rarity: !rarity Uncommon
   category: "consumable"
-  description: "Increases multiplier[0] by 7.25 and multiplier[1] by 0.0625 per item"
+  description: "Increases multiplier[0] by 7 + 1\u20444 and multiplier[1] by 0.0625 per item"
   attributes:
     multiplier: [!fraction "7 + 1/4", !fraction "1/16"]
   onUse: !function
@@ -137,7 +137,7 @@ car:
   icon: 🚗
   price: 
     points: !bigint 100000000
-  description: "Increases Work Bonus by 1 + 1/2 per item\nGuarantees evading taxes once"
+  description: "Increases Work Bonus by 1 + 1\u20442 per item\nGuarantees evading taxes once"
   rarity: !rarity Legendary
   category: consumable
   minProgress: !progression VenezuelaMode
