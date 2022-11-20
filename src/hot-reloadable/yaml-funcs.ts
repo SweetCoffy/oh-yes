@@ -1,5 +1,5 @@
 import { Progression, UserData } from "../types.js";
-import { BigIntFraction, eco, getFracValue, getPartialValue } from "../util.js";
+import { BigIntFraction, eco, getFracValue } from "../util.js";
 import { ItemType } from "./economy.js";
 let { addMul } = eco()
 

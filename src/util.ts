@@ -225,18 +225,6 @@ export function formatFraction(frac: BigIntFraction) {
     }
     return `${a}\u2044${b}`
 }
-
-export function getPartialValue(v: bigint[], a: bigint = 1n) {
-    return v.reduce((prev, cur, i) => prev + (cur * a) / (2n ** BigInt(i)), 0n)
-}
-
-export function getPartialFrac(v: bigint[], am: bigint = 1n, scale: bigint = 64n): BigIntFraction {
-    let a = 0n, b = 0n
-    let value = getPartialValue(v, am * scale)
-    a = value
-    b = am * scale
-    return simplifyFrac([a, b])
-}
 export function getFracValue([a, b]: BigIntFraction, x: bigint = 1n) {
     return a * x / b
 }
