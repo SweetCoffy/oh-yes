@@ -298,14 +298,14 @@ async function saveAllUsers() {
  * @param u j
  * @param amount j
  */
-function getPrice(item: string, u: UserData, amount: bigint): OptionalMoney {
+function getPrice(item: string, u: WrappedUserData, amount: bigint): OptionalMoney {
     let info = items.get(item)
     if (!info) return {}
     if (u.items.suspicious_developer_item) return {}
     let ml = 1n
     if (u.vzMode) ml *= VzPriceMul
     let price = multiplyMoney(info.price, amount * ml)
-    if (u.items.phone) price = divideMoney(multiplyMoney(price, 100n - getDiscount(u.phone.tier)), 100n)
+    if (u.hasPhone()) price = divideMoney(multiplyMoney(price, 100n - getDiscount(u.phone.tier)), 100n)
     return price
 }
 /**

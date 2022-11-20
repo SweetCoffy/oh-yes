@@ -2,6 +2,7 @@ import { Message, User } from "discord.js";
 import { readdir } from "fs/promises";
 import { join } from "path";
 import { formats, formatsBigint } from "./formats.js";
+import { Item } from "./gen-items.js";
 import hotReloadable from "./hot-reloadable.js";
 import { getHotReloadable } from "./loader.js";
 import { Money, OptionalMoney, UserData } from "./types";
@@ -308,6 +309,9 @@ export function lcmArray(...args: bigint[]) {
 }
 class UserDataWrapper {
     data: UserData
+    get items(): { [x in Item]?: bigint } {
+        return this.data.items
+    }
     constructor(data: UserData) {
         this.data = data;
     }
@@ -317,17 +321,32 @@ class UserDataWrapper {
     getMul() {
         return getMul(this.data)
     }
+    has(item: Item) {
+        return this.get(item) > 0n
+    }
+    add(item: Item, amount: bigint) {
+        this.set(item, this.get(item) + amount)
+    }
+    set(item: Item, amount: bigint) {
+        this.items[item] = amount
+    }
+    get(item: Item) {
+        return this.items[item] ?? 0n
+    }
+    hasPhone() {
+        return this.has(Item.Phone)
+    }
 }
 export function dataWrapper(data: UserData): WrappedUserData {
     let w = new UserDataWrapper(data)
     return new Proxy(w, {
         get(target, p, receiver) {
-            if (p in target) return Reflect.get(target, p, receiver)
-            if (p in target.data) return Reflect.get(target.data, p, receiver)
+            if (p in target) return Reflect.get(target, p, target)
+            if (p in target.data) return Reflect.get(target.data, p, target.data)
         },
         set(target, p, v, receiver) {
-            if (p in target) return Reflect.set(target, p, v, receiver)
-            if (p in target.data) return Reflect.set(target.data, p, v, receiver)
+            if (p in target) return Reflect.set(target, p, v, target)
+            if (p in target.data) return Reflect.set(target.data, p, v, target.data)
             return false
         },
         deleteProperty(target, p) {
@@ -338,4 +357,4 @@ export function dataWrapper(data: UserData): WrappedUserData {
         },
     }) as any
 }
-export type WrappedUserData = UserDataWrapper & UserData
+export type WrappedUserData = UserData & UserDataWrapper

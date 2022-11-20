@@ -9,7 +9,7 @@ export function genItems() {
     let { items } = getHotReloadable().eco
 
     let s = createWriteStream(join(SourcePath, "gen-items.ts"), { encoding: "utf8" })
-    s.write(`export const Item = {\n`)
+    s.write(`export enum Item {\n`)
     for (let [k, v] of items) {
         let indent = "\t"
         let propName = v.name.split(" ").join("")
@@ -29,9 +29,10 @@ export function genItems() {
         s.write(indent + `*\n`)
         s.write(indent + `* From ${enumeration(v.sourceFiles.map(el => `\`${el}\``)) || "Unknown"}\n`)
         s.write(indent + `*/\n`)
-        s.write(indent + `${propName}: "${k}",\n`)
+        s.write(indent + `${propName} = "${k}",\n`)
     }
 
-    s.end(`}`)
+    s.write(`}\n`)
+    s.end()
 }
 

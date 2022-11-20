@@ -1,4 +1,4 @@
-export const Item = {
+export enum Item {
 	/**
 	* 🍪 Cookie
 	*
@@ -9,7 +9,7 @@ export const Item = {
 	*
 	* From `content/items.yml`
 	*/
-	Cookie: "cookie",
+	Cookie = "cookie",
 	/**
 	* 🍞 Bread
 	*
@@ -20,7 +20,7 @@ export const Item = {
 	*
 	* From `content/items.yml`
 	*/
-	Bread: "bread",
+	Bread = "bread",
 	/**
 	* 🥖 Baguette
 	*
@@ -31,7 +31,7 @@ export const Item = {
 	*
 	* From `content/items.yml`
 	*/
-	Baguette: "baguette",
+	Baguette = "baguette",
 	/**
 	* 🍝 Spaghet
 	*
@@ -42,7 +42,7 @@ export const Item = {
 	*
 	* From `content/items.yml`
 	*/
-	Spaghet: "spaghet",
+	Spaghet = "spaghet",
 	/**
 	* 🥮 Moon Cake
 	*
@@ -53,7 +53,7 @@ export const Item = {
 	*
 	* From `content/items.yml`
 	*/
-	MoonCake: "moon_cake",
+	MoonCake = "moon_cake",
 	/**
 	* 🥑 Avocado
 	*
@@ -64,7 +64,7 @@ export const Item = {
 	*
 	* From `content/items.yml`
 	*/
-	Avocado: "avocado",
+	Avocado = "avocado",
 	/**
 	* 🥚 Egg
 	*
@@ -75,7 +75,7 @@ export const Item = {
 	*
 	* From `content/items.yml`
 	*/
-	Egg: "egg",
+	Egg = "egg",
 	/**
 	* 🥛 Milk
 	*
@@ -86,7 +86,7 @@ export const Item = {
 	*
 	* From `content/items.yml`
 	*/
-	Milk: "milk",
+	Milk = "milk",
 	/**
 	* 🇻🇪 Venezuela Flag
 	*
@@ -94,7 +94,7 @@ export const Item = {
 	*
 	* From `content/items.yml`
 	*/
-	VenezuelaFlag: "venezuela_flag",
+	VenezuelaFlag = "venezuela_flag",
 	/**
 	* 🪑 The Chair
 	*
@@ -102,7 +102,7 @@ export const Item = {
 	*
 	* From `content/items.yml`
 	*/
-	TheChair: "the_chair",
+	TheChair = "the_chair",
 	/**
 	* 🚗 Venezuela Car
 	*
@@ -114,29 +114,29 @@ export const Item = {
 	*
 	* From `content/items.yml`
 	*/
-	VenezuelaCar: "car",
+	VenezuelaCar = "car",
 	/**
 	* 🏆 Trophy
 	*
 	* From `content/utility-items.yml`
 	*/
-	Trophy: "trophy",
+	Trophy = "trophy",
 	/**
 	* 🎫 Gambling Pass
 	*
 	* From `content/utility-items.yml`
 	*/
-	GamblingPass: "gambling_pass",
+	GamblingPass = "gambling_pass",
 	/**
 	* 📱 Phone
 	*
 	* From `content/utility-items.yml`
 	*/
-	Phone: "phone",
+	Phone = "phone",
 	/**
 	* 🐛 Suspicious Developer Item
 	*
 	* From `content/utility-items.yml`
 	*/
-	SuspiciousDeveloperItem: "suspicious_developer_item",
+	SuspiciousDeveloperItem = "suspicious_developer_item",
 }
