@@ -247,8 +247,8 @@ function addMul(u: UserData, i: number, amt: bigint) {
     }
     u.multipliers[i] += amt
 }
-async function getUser(user: User): Promise<UserData> {
-    if (users.has(user.id)) return users.get(user.id) as UserData
+async function getUser(user: User): Promise<WrappedUserData> {
+    if (users.has(user.id)) return users.get(user.id) as WrappedUserData
     let o = await getData(user.id)
     let obj: UserData = {
         multipliers: [1n],
