@@ -3,7 +3,7 @@ import { readdir, readFile } from "fs/promises"
 import { dirname, join } from "path"
 import hotReloadable from "./hot-reloadable"
 import { reloadWorkers } from "./workers.js"
-import { Command } from "./types"
+import { Command, SubcommandGroup } from "./types"
 import { readdirR, resetStuff } from "./util.js"
 import { execSync } from "child_process"
 
@@ -26,6 +26,7 @@ export async function loadFiles(...files: string[]): Promise<unknown[]> {
 
 export async function loadCommands(client: Client, ...files: string[]) {
     let cmds = await loadFiles(...files.map(el => join("commands", el))) as Command[]
+    let { addCommandToGroup } = getHotReloadable().commands
     commands.clear()
     lookup.clear()
     categories.clear()
@@ -53,6 +54,7 @@ export async function loadCommands(client: Client, ...files: string[]) {
             if (files[i]) c.category = dirname(files[i])
             if (!c.category || c.category == ".") c.category = "no category"
             if (!categories.has(c.category)) categories.set(c.category, new Collection())
+            if (c.groupName) continue
             categories.get(c.category)?.set(c.name, c)
             commands.set(c.name, c)
             lookup.set(c.name, c.name)
@@ -63,6 +65,15 @@ export async function loadCommands(client: Client, ...files: string[]) {
         } finally {
             i++
         }
+    }
+    for (let c of cmds) {
+        if (!c.groupName) continue
+        let group = commands.get(c.groupName) as SubcommandGroup | undefined
+        if (!group) {
+            console.error(`Error loading '${c.name}': No group found with name '${c.groupName}'`)
+            continue
+        }
+        addCommandToGroup(group, c)
     }
 }
 
