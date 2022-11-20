@@ -315,4 +315,37 @@ export function lcmArray(...args: bigint[]) {
         v = lcm(v, n)
     }
     return v;
-} 
+}
+class UserDataWrapper {
+    data: UserData
+    constructor(data: UserData) {
+        this.data = data;
+    }
+    toJSON() {
+        return this.data
+    }
+    getMul() {
+        return getMul(this.data)
+    }
+}
+export function dataWrapper(data: UserData): WrappedUserData {
+    let w = new UserDataWrapper(data)
+    return new Proxy(w, {
+        get(target, p, receiver) {
+            if (p in target) return Reflect.get(target, p, receiver)
+            if (p in target.data) return Reflect.get(target.data, p, receiver)
+        },
+        set(target, p, v, receiver) {
+            if (p in target) return Reflect.set(target, p, v, receiver)
+            if (p in target.data) return Reflect.set(target.data, p, v, receiver)
+            return false
+        },
+        deleteProperty(target, p) {
+            return false
+        },
+        defineProperty(target, property, attributes) {
+            return false
+        },
+    }) as any
+}
+export type WrappedUserData = UserDataWrapper & UserData

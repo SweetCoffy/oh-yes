@@ -9,20 +9,20 @@ import { getHotReloadable } from "../loader.js";
 let { items, ItemType } = eco()
 
 interface ContentType<T> {
-    getValue: (obj: any, id: string) => T | null,
+    getValue: (obj: any, id: string, source: string) => T | null,
     map: Map<string, T>,
     schema: NodeJS.Dict<any>,
 }
 
 const types = new Map<string, ContentType<any>>();
 types.set("ItemType", {
-    getValue: (obj: ItemTypeData, id: string) => {
+    getValue: (obj: ItemTypeData, id: string, source: string) => {
         let it = items.get(id)
         if (it) {
             it.patch(obj)
-            return it
-        }
-        return new ItemType("YAML Placeholder", "Y", obj)
+        } else it = new ItemType("YAML Placeholder", "Y", obj)
+        it.sourceFiles.push(source)
+        return it
     },
     map: items,
     schema: {},
@@ -99,7 +99,7 @@ async function loadFile(path: string) {
             console.log(`${k} has an invalid type: '${o.type || defaultType}'`)
             continue
         }
-        let val = type.getValue(o, k)
+        let val = type.getValue(o, k, path)
         type.map.set(k, val)
         console.log(`Added '${k}'`)
     }

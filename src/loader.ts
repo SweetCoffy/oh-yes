@@ -6,6 +6,7 @@ import { reloadWorkers } from "./workers.js"
 import { Command, SubcommandGroup } from "./types"
 import { readdirR, resetStuff } from "./util.js"
 import { execSync } from "child_process"
+import { genItems } from "./code-gen.js"
 
 const BuildPath = "build"
 export const commands: Collection<string, Command> = new Collection();
@@ -112,6 +113,7 @@ export async function loadAll(client: Client) {
     } catch (er) {
         console.log(er)
     }
+    genItems()
 
     let r = await Promise.all(
         [

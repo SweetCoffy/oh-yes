@@ -3,7 +3,7 @@ import { existsSync } from "fs";
 import { readFile, writeFile } from "fs/promises";
 import { getData } from "../data.js";
 import { Money, OptionalMoney, PhoneMaxTier, Progression, UserData, VzPriceMul } from "../types.js";
-import { allMoneyFormat, divideMoney, formatNumber, multiplyMoney, format, formatFraction, titleCase, splitCamelCase, getPartialFrac, xTimes, BigIntFraction, getDiscount, max, enumeration, lcmArray } from "../util.js";
+import { allMoneyFormat, divideMoney, formatNumber, multiplyMoney, format, formatFraction, titleCase, splitCamelCase, getPartialFrac, xTimes, BigIntFraction, getDiscount, max, enumeration, lcmArray, dataWrapper, WrappedUserData } from "../util.js";
 
 enum Rarity {
     Junk = 0,
@@ -157,6 +157,7 @@ export class ItemType {
      * Whether or not a user can only have one of this item in their inventory. Useful for utility items.
      */
     unique: boolean = false
+    sourceFiles: string[]
     patch(obj: ItemTypeData) {
         for (let k in obj) {
             //@ts-ignore
@@ -194,6 +195,7 @@ export class ItemType {
         this.icon = icon
         this.attributes = new Collection()
         this._attrData = {}
+        this.sourceFiles = []
         if (obj) {
             this.patch(obj)
         }
@@ -208,7 +210,7 @@ export class ItemType {
 // }
 // class CPUItemType extends ComputerComponentItemType { }
 // class GPUItemType extends ComputerComponentItemType { }
-let users: Collection<string, UserData> = new Collection()
+let users: Collection<string, WrappedUserData> = new Collection()
 let items: Collection<string, ItemType> = new Collection()
 
 // items.set("intol_xeson_get_real", new CPUItemType("Intol™ Xeson© Get Real", "<:intolxesongetreal:980699295084871700>", {
@@ -273,13 +275,15 @@ async function getUser(user: User): Promise<UserData> {
             ...(o?.money || {}),
         }
     }
-    users.set(user.id, obj)
-    return obj
+    let wrapper = dataWrapper(obj)
+    users.set(user.id, wrapper)
+    return wrapper
 }
 async function saveUser(id: string | User): Promise<void> {
     if (id instanceof User) id = id.id;
-    if (!users.has(id)) return
-    await writeFile(`data/${id}.json`, JSON.stringify(users.get(id), (_, v) => {
+    let data = users.get(id)
+    if (!data) return
+    await writeFile(`data/${id}.json`, JSON.stringify(data, (_, v) => {
         if (typeof v == "bigint") return "\u6969" + v
         return v
     }))
