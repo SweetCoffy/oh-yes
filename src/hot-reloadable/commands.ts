@@ -98,7 +98,9 @@ async function convertArgs(args: any[], cmdArgs: CommandArg[], client: Client): 
                 return null
             }
         } else if (arg.type instanceof ArgType) {
-            return await arg.type.convert(v, arg, client)
+            let value = await arg.type.convert(v, arg, client)
+            if (!arg.type.validate(value)) throw new Error(`${arg.name}: ${arg.type.constructor.name}.validate() failed.`)
+            return value
         }
         return v;
     }

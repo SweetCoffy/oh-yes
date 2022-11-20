@@ -1,12 +1,13 @@
+import { Item } from "../../gen-items.js";
 import { getHotReloadable } from "../../loader.js";
-import { Command } from "../../types";
+import { ArgType, Command } from "../../types.js";
 import { allMoneyFormat, divideMoneyAll, getUser, itemString, multiplyMoney, rarities } from "../../util.js";
 
 export default {
     name: "item-info",
     description: "b",
-    args: [{ type: "string", name: "item", required: true }],
-    async run(msg, item: string) {
+    args: [{ type: ArgType.ItemType, name: "item", required: true }],
+    async run(msg, item: Item) {
         let { items, ItemAttributeType } = getHotReloadable().eco
         let u = await getUser(msg.author);
         let it = items.get(item)

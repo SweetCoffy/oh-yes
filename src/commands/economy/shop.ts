@@ -1,5 +1,6 @@
+import { Item } from "../../gen-items.js";
 import { getHotReloadable } from "../../loader.js";
-import { Command } from "../../types.js";
+import { ArgType, Command } from "../../types.js";
 import { addItem, allMoneyFormat, eco, hasMoney, itemString, moneyLeft, multiplyMoney, subtractMoney } from "../../util.js";
 
 export default {
@@ -7,14 +8,14 @@ export default {
     aliases: ["buy"],
     description: "Buys an item or shows a list of items if no arguments passed",
     args: [{
-        name: "item", type: "string",
+        name: "item", type: ArgType.ItemType,
         required: false
     }, {
         name: "amount",
         type: "bigint",
         required: false,
     }],
-    async run(msg, item?: string, amount?: bigint) {
+    async run(msg, item?: Item, amount?: bigint) {
         let { items, getUser, getPrice, itemAvailable } = getHotReloadable().eco
         let u = await getUser(msg.author)
         if (!item) {

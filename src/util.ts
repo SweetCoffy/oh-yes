@@ -357,4 +357,8 @@ export function dataWrapper(data: UserData): WrappedUserData {
         },
     }) as any
 }
+export function isItem(id: string): id is Item {
+    if (eco().items.has(id)) return true
+    return false
+}
 export type WrappedUserData = UserData & UserDataWrapper

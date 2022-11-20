@@ -1,4 +1,4 @@
-import { EmbedBuilder, Message } from "discord.js";
+import { Colors, Embed, EmbedBuilder, Message } from "discord.js";
 import { getHotReloadable } from "../loader.js";
 import { eco, itemString } from "../util.js";
 
@@ -16,24 +16,36 @@ async function handleCommand(msg: Message) {
     let { command: cmd, args } = d
     if (cmd.devOnly && msg.author.id != "602651056320675840") return await msg.reply("Bruh")
     if (cmd.precondition && !(await cmd.precondition(msg))) return
-    let converted = await convertArgs(args, cmd.args, msg.client)
-    console.log(converted)
-    await cmd.run(msg, ...converted)
-    if (u.progression > progress) {
-        let unlocks = getUnlockedItems(progress, u.progression)
-        let info = progressionInfo[u.progression]
-        let embed = new EmbedBuilder()
-            .setTitle(`Progression: ${info.title}`)
-            .setDescription(info.description)
-        if (unlocks.size > 0) {
-            embed.addFields({ name: "Items Unlocked", value: unlocks.map((_, k) => itemString(k)).join("\n") })
+    try {
+        let converted = await convertArgs(args, cmd.args, msg.client)
+        console.log(converted)
+        await cmd.run(msg, ...converted)
+        if (u.progression > progress) {
+            let unlocks = getUnlockedItems(progress, u.progression)
+            let info = progressionInfo[u.progression]
+            let embed = new EmbedBuilder()
+                .setTitle(`Progression: ${info.title}`)
+                .setDescription(info.description)
+            if (unlocks.size > 0) {
+                embed.addFields({ name: "Items Unlocked", value: unlocks.map((_, k) => itemString(k)).join("\n") })
+            }
+            await msg.reply({
+                embeds: [embed]
+            })
         }
-        await msg.reply({
-            embeds: [embed]
-        })
-    }
-    if (u.taxes > prevTaxes && u.taxes >= u.money.points / 8n) {
-        await msg.reply(`Pay your taxes.`)
+        if (u.taxes > prevTaxes && u.taxes >= u.money.points / 8n) {
+            await msg.reply(`Pay your taxes.`)
+        }
+    } catch (err) {
+        console.error(err)
+        if (!(err instanceof Error)) {
+            return await msg.reply(`Unknown error.`)
+        }
+        let embed = new EmbedBuilder()
+            .setTitle(err.name)
+            .setDescription(err.message)
+            .setColor(Colors.Red)
+        await msg.reply({ embeds: [embed] })
     }
 }
 

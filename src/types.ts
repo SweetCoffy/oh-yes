@@ -1,5 +1,6 @@
 import { Client, Collection, Message, User } from "discord.js"
-import { CurrencyID } from "./util"
+import { Item } from "./gen-items.js"
+import { CurrencyID, isItem } from "./util.js"
 
 interface CommandBaseArg {
     name: string,
@@ -61,15 +62,21 @@ export type Money = {
 }
 export type OptionalMoney<T = bigint> = { [x in CurrencyID]?: T }
 
+type ValidateFn = (v: any) => boolean
+type CustomDisplayFn = (v: CommandArg) => string
+
 export class ArgType<T = any> {
     name: string
     _parse: (v: any, arg: CommandArg) => T = (v) => v as T
     _convert?: (v: any, arg: CommandArg, client: Client) => Promise<T>
-    constructor(name: string, parse?: typeof ArgType.prototype._parse, convert?: typeof ArgType.prototype._convert) {
+    customDisplay?: CustomDisplayFn
+    constructor(name: string, parse?: typeof ArgType.prototype._parse, convert?: typeof ArgType.prototype._convert, validate?: ValidateFn, customDisplay?: CustomDisplayFn) {
         this.name = name;
         if (!parse && !convert) throw new Error(`Type '${name}' must have at least a 'parse' or 'convert' method.`)
         if (parse) this._parse = parse
+        if (validate) this.validate = validate
         this._convert = convert
+        this.customDisplay = customDisplay
     }
     parse(v: any, arg: CommandArg) {
         return this._parse(v, arg)
@@ -78,4 +85,12 @@ export class ArgType<T = any> {
         if (!this._convert) return v;
         return await this._convert(v, arg, client)
     }
+    validate(v: any): boolean {
+        return true
+    }
+    static ItemType: ArgType<Item> = new ArgType("Item Type", undefined, async (v) => {
+        return Item[v as keyof typeof Item] ?? v
+    }, (v: string) => {
+        return isItem(v)
+    })
 }

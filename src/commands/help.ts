@@ -1,5 +1,5 @@
 import { categories, commands, lookup } from "../loader.js";
-import { Command, SubcommandGroup } from "../types";
+import { ArgType, Command, SubcommandGroup } from "../types.js";
 
 export default {
     name: "help",
@@ -33,6 +33,7 @@ export default {
                                 cmd.args.map(el => {
                                     let inner = el.name
                                     if (el.type == "enum") inner = `${el.name}, one of: ${Object.keys(el.enum).join("\u2014")}`
+                                    else if (el.type instanceof ArgType && el.type.customDisplay) inner = el.type.customDisplay(el)
                                     if (el.required) return `<${inner}>`
                                     return `[${inner}]`
                                 }).join(" ")}`,
