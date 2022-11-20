@@ -236,9 +236,11 @@ export function xTimes(v: number | bigint) {
 }
 export function nth(v: number | bigint) {
     let str = v.toString();
-    if (str.endsWith("1")) return `${str}st`
-    if (str.endsWith("2")) return `${str}nd`
-    if (str.endsWith("3")) return `${str}rd`
+    if (v > 19) {
+        if (str.endsWith("1")) return `${str}st`
+        if (str.endsWith("2")) return `${str}nd`
+        if (str.endsWith("3")) return `${str}rd`
+    }
     return `${str}th`
 }
 export function addFracs(...fracs: BigIntFraction[]) {

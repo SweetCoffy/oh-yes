@@ -3,7 +3,7 @@ import { readdir } from "fs/promises";
 import { basename } from "path";
 import { getHotReloadable } from "../../loader.js";
 import { Command, UserData } from "../../types.js";
-import { allMoneyFormat } from "../../util.js";
+import { allMoneyFormat, nth } from "../../util.js";
 
 export default {
     name: "leaderboard",
@@ -27,7 +27,7 @@ export default {
         let data = await Promise.all(users.map(async user => [user, await getUser(user)])) as [User, UserData][]
         data.sort(([_1, a], [_2, b]) => thing(b.money.points, a.money.points))
         await msg.reply({
-            content: `${data.map(([user, data], i) => `#${i + 1} ${user.username} \u2014 ${allMoneyFormat(data.money)}`).join("\n")}`
+            content: `${data.map(([user, data], i) => `**${nth(i + 1)}** ${user.username} \u2014 ${allMoneyFormat(data.money)}`).join("\n")}`
         })
     }
 } as Command
