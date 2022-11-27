@@ -92,7 +92,7 @@ export async function loadEvents(client: Client, ...files: string[]) {
         }
     }
 }
-export async function loadAll(client: Client) {
+export async function loadAll(client?: Client) {
     reloadWorkers()
     // hot reloadable must be loaded before everything else because reasons
     let hr = await loadFile("hot-reloadable.js") as typeof hotReloadable
@@ -115,11 +115,13 @@ export async function loadAll(client: Client) {
     }
     genItems()
 
-    let r = await Promise.all(
-        [
-            loadEvents(client, "messages.js"),
-            loadCommands(client, ...await readdirR(join(BuildPath, "commands")))
-        ])
+    if (client) {
+        let r = await Promise.all(
+            [
+                loadEvents(client, "messages.js"),
+                loadCommands(client, ...await readdirR(join(BuildPath, "commands")))
+            ])
+    }
 }
 
 export function getHotReloadable(): typeof hotReloadable {
