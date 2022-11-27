@@ -3,8 +3,8 @@ trophy:
   name: Trophy
   icon: 🏆
   price:
-    points: !bigint 1000000000
-    gold: !bigint 1000000
+    points: !bigint 100000
+    gold: !bigint 100000
   description: "Doubles money gained from work"
   lore: "You won!"
   rarity: !rarity Epic
@@ -15,9 +15,9 @@ gambling_pass:
   name: Gambling Pass
   icon: 🎫
   price: 
-    points: !bigint 1000000000
-    gold: !bigint 1000000000
-  rarity: !rarity Legendary
+    points: !bigint 100000
+    gold: !bigint 100000
+  rarity: !rarity Epic
   unique: true
   category: utility
   description: "Enables gambling."
@@ -26,8 +26,8 @@ phone:
   name: Phone
   icon: 📱
   price: 
-    points: !bigint 100000
-  rarity: !rarity Unique
+    points: !bigint 50000
+  rarity: !rarity Epic
   category: utility
   description: "- Grants an ugpradeable discount on all items, starting at 5%.\n- Grants access to the `phone` command group"
   lore: "You will own nothing and be happy."

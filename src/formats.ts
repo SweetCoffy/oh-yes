@@ -1,4 +1,6 @@
-export let formats = [
+export type Format<T = bigint> = { suffix: string, min: T }
+
+export let formats: Format<number>[] = [
   { suffix: ' K', min: 1000 },
   { suffix: ' M', min: 1000000 },
   { suffix: ' B', min: 1000000000 },
@@ -9,7 +11,15 @@ export let formats = [
   { suffix: ' Sp', min: 1000000000000000000000000 },
 ]
 
-export let formatsBigint = [
+export let sizeFormat: Format<number>[] = [
+  { suffix: ' B', min: 1 },
+  { suffix: ' KiB', min: 1024 },
+  { suffix: ' MiB', min: 1024 ** 2 },
+  { suffix: ' GiB', min: 1024 ** 3 },
+  { suffix: ' TiB', min: 1024 ** 4 },
+]
+
+export let formatsBigint: Format<bigint>[] = [
   { suffix: ' K', min: 1000n },
   { suffix: ' M', min: 1000000n },
   { suffix: ' B', min: 1000000000n },

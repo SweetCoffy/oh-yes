@@ -1,8 +1,9 @@
 import { Client, IntentsBitField } from "discord.js"
 import { readFileSync } from "fs"
 import { loadAll, loadEvents } from "./loader.js"
+import { eco } from "./util.js"
 
-const client = new Client({ intents: IntentsBitField.Flags.GuildMessages | IntentsBitField.Flags.MessageContent | IntentsBitField.Flags.Guilds })
+const client = new Client({ intents: IntentsBitField.Flags.GuildMessages | IntentsBitField.Flags.MessageContent | IntentsBitField.Flags.Guilds | IntentsBitField.Flags.GuildMessageReactions })
 
 console.time("Loading stuff")
 await loadAll(client)
@@ -17,4 +18,7 @@ process.on("uncaughtException", (err, origin) => {
 })
 process.on("unhandledRejection", (reason) => {
     console.log(reason)
+})
+process.on("beforeExit", async () => {
+    await eco().saveAllUsers()
 })

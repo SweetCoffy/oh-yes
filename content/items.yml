@@ -58,7 +58,6 @@ moon_cake:
   icon: 🥮
   price: 
     points: !bigint 1900
-    gold: !bigint 50
   rarity: !rarity Uncommon
   category: "consumable"
   description: "Increases multiplier[0] by 2 + 1\u20444 per item"
@@ -74,7 +73,7 @@ avocado:
     points: !bigint 6499
   rarity: !rarity Uncommon
   category: "consumable"
-  description: "Increases multiplier[0] by 7 + 1\u20444 and multiplier[1] by 0.0625 per item"
+  description: "Increases multiplier[0] by 7 + 1\u20444 and multiplier[1] by 1\u204416 per item"
   attributes:
     multiplier: [!fraction "7 + 1/4", !fraction "1/16"]
   onUse: !function

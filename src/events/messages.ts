@@ -1,6 +1,6 @@
-import { Colors, Embed, EmbedBuilder, Message } from "discord.js";
+import { Colors, Embed, EmbedBuilder, Message, MessageReaction, User } from "discord.js";
 import { getHotReloadable } from "../loader.js";
-import { eco, itemString } from "../util.js";
+import { eco, getUser, itemString } from "../util.js";
 
 const prefix = ";"
 
@@ -9,13 +9,24 @@ async function handleCommand(msg: Message) {
     let { parseCommand, convertArgs } = hr.commands
     let { getUser, progressionInfo, getUnlockedItems } = hr.eco
     let u = await getUser(msg.author)
+    if (Date.now() > u.messageCooldown) {
+        u.messageCooldown = Date.now() + 10 * 1000
+
+    }
     let prevTaxes = u.taxes
     let progress = u.progression
     let d = parseCommand(msg.content.slice(prefix.length), u.aliases)
     if (!d) return msg.reply(`Bruh`)
     let { command: cmd, args } = d
     if (cmd.devOnly && msg.author.id != "602651056320675840") return await msg.reply("Bruh")
+    if (cmd.name in u.cooldowns && cmd.cooldown) {
+        if (Date.now() < (u.cooldowns[cmd.name] ?? 0)) {
+            let time = Math.ceil(((u.cooldowns[cmd.name] ?? 0) - Date.now()) / 1000)
+            return await msg.reply(`Please wait ${time} seconds before using this command.`)
+        }
+    }
     if (cmd.precondition && !(await cmd.precondition(msg))) return
+    u.cooldowns[cmd.name] = Date.now() + (cmd.cooldown ?? 0)
     try {
         let converted = await convertArgs(args, cmd.args, msg.client)
         console.log(converted)
@@ -70,5 +81,12 @@ export default [
         } catch (err) {
             console.error(err)
         }
+    },
+    async function messageReactionAdd(reaction: MessageReaction, user: User) {
+        if (user.id == reaction.message.author?.id) return
+        if (!reaction.message.author) return
+        console.log("h")
+        let u = await getUser(reaction.message.author)
+        u.money.points += 750n * u.getMul()
     }
 ]

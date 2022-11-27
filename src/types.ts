@@ -24,6 +24,7 @@ interface BaseCommand {
     isSubcommandGroup?: boolean,
     _group?: SubcommandGroup,
     groupName?: string,
+    cooldown?: number,
     precondition?: (msg: Message) => Promise<boolean>
     run: (msg: Message, ...args: any[]) => Promise<any>
 }
@@ -56,6 +57,8 @@ export interface UserData {
     progression: Progression,
     taxEvasion: number,
     evadedTaxes: number,
+    cooldowns: NodeJS.Dict<number>,
+    messageCooldown: number,
 }
 export type Money = {
     [x in CurrencyID]: bigint

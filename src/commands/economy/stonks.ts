@@ -19,7 +19,7 @@ export default {
                     .setDescription(
                         `Mone: ${allMoneyFormat(data.money)}
 Multiplier: ${data.multipliers.join(" * ")} (${format(getMul(data))})
-Work bonus: +${format(data.workBonus)} (Maximum profit: ${allMoneyFormat({ points: (data.workBonus + 50n) * getMul(data), gold: (data.workBonus / 8n + 6n) * getMul(data) })})
+Work bonus: +${format(data.workBonus)}
 ${Object.keys(data.items).filter(v => data.items[v]).filter(v => eco().items.get(v)?.category == "utility").map(el => itemString(el, undefined, true)).join(" ")}
 `)]
         })

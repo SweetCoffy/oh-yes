@@ -1,7 +1,7 @@
 import { Message, User } from "discord.js";
 import { readdir } from "fs/promises";
 import { join } from "path";
-import { formats, formatsBigint } from "./formats.js";
+import { Format, formats, formatsBigint } from "./formats.js";
 import { Item } from "./gen-items.js";
 import hotReloadable from "./hot-reloadable.js";
 import { getHotReloadable } from "./loader.js";
@@ -76,9 +76,9 @@ export function itemString(item: string, amount?: bigint, iconOnly?: boolean) {
         return "Unknown item"
     }
 }
-export function formatNumber(number: number) {
+export function formatNumber(number: number, format: Format<number>[] = formats) {
     let funi = null
-    for (let f of formats) {
+    for (let f of format) {
         if (Math.abs(number) >= f.min) funi = f
     }
     if (!funi) return `${number}`
@@ -99,9 +99,9 @@ export async function readdirR(path: string, ...append: string[]): Promise<strin
     }
     return files
 }
-export function format(number: bigint) {
+export function format(number: bigint, format: Format[] = formatsBigint) {
     let funi = null
-    for (let f of formatsBigint) {
+    for (let f of format) {
         if (abs(number) >= f.min) funi = f
     }
     if (!funi) return `${number}`
@@ -362,6 +362,6 @@ export function isItem(id: string): id is Item {
     return false
 }
 export function isProduction() {
-	return process.env.NODE_ENV == "production"
+    return process.env.NODE_ENV == "production"
 }
 export type WrappedUserData = UserData & UserDataWrapper

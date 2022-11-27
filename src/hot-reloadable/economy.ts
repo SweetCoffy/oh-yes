@@ -228,6 +228,7 @@ async function getUser(user: User): Promise<WrappedUserData> {
         progression: 0,
         taxEvasion: 0,
         evadedTaxes: 0,
+        messageCooldown: 0,
         ...o,
         // Phone info is always present regardless of whether or not the user has a phone
         phone: {
@@ -241,6 +242,9 @@ async function getUser(user: User): Promise<WrappedUserData> {
             gold: 150n,
             sus: 0n,
             ...(o?.money || {}),
+        },
+        cooldowns: {
+            ...(o?.cooldowns || {})
         }
     }
     let wrapper = dataWrapper(obj)
@@ -255,6 +259,7 @@ async function saveUser(id: string | User): Promise<void> {
         if (typeof v == "bigint") return "\u6969" + v
         return v
     }))
+    console.log(`Saved user '${id}'`)
     users.delete(id)
 }
 async function saveAllUsers() {
