@@ -361,4 +361,7 @@ export function isItem(id: string): id is Item {
     if (eco().items.has(id)) return true
     return false
 }
+export function isProduction() {
+	return process.env.NODE_ENV == "production"
+}
 export type WrappedUserData = UserData & UserDataWrapper

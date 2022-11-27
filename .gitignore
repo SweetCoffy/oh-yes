@@ -109,3 +109,4 @@ dist
 build/
 data/
 content/testing
+docker-compose.yml

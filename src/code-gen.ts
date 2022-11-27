@@ -1,11 +1,12 @@
 import { createWriteStream } from "fs"
 import { join } from "path"
 import { getHotReloadable } from "./loader.js"
-import { enumeration } from "./util.js"
+import { enumeration, isProduction } from "./util.js"
 
 const SourcePath = `src`
 
 export function genItems() {
+	if (isProduction()) return
     let { items } = getHotReloadable().eco
 
     let s = createWriteStream(join(SourcePath, "gen-items.ts"), { encoding: "utf8" })
