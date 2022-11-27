@@ -1,6 +1,9 @@
 version: "2"
+volumes:
+  ohyes_data: 
+    external: true
 services:
-  node:
+  ohyes:
     image: "node:19-alpine"
     user: "node"
     working_dir: /home/node/app
@@ -8,5 +11,5 @@ services:
       - NODE_ENV=production
     volumes:
       - "./:/home/node/app:ro"
-      - "./data:/home/node/app/data"
+      - "ohyes_data:/home/node/app/data:rw"
     command: "npm start"

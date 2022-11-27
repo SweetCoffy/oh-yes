@@ -1,5 +1,8 @@
 import { existsSync } from "fs";
 import { readFile } from "fs/promises"
+import { resolve } from "path";
+
+console.log(resolve("./data"))
 
 export async function getData(id: string): Promise<any> {
     if (existsSync(`data/${id}.json`)) {
