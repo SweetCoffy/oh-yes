@@ -126,15 +126,15 @@ function subcommandGroup(name: string, devOnly: boolean = false) {
         async run(msg, a: string[]) {
             if (!a?.length) {
                 if (this.default) return await this.default.run(msg)
-                await msg.reply("No subcommand provided.")
+                return CommandResponse.error({ message: `No subcommand provided.` })
             } else {
                 let u = await getUser(msg.author)
                 let str = a.join(" ")
                 let d = parseCommand(str, u.aliases, this.commands, this._lookup)
-                if (!d) return await msg.reply("Bruh")
+                if (!d) return CommandResponse.error({ message: `Invalid subcommand usage.` })
                 let cmd = d.command
                 let converted = await convertArgs(d.args, cmd.args, msg.client)
-                await cmd.run(msg, ...converted)
+                return await cmd.run(msg, ...converted)
             }
         },
     }

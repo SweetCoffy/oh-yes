@@ -9,7 +9,7 @@ export default {
     args: [{ type: "user", name: "user", required: true }, { type: "string", name: "...command", required: true }],
     lexer: false,
     async run(msg, user: User, command: string[]) {
-        let { parseCommand, convertArgs } = getHotReloadable().commands
+        let { parseCommand, convertArgs, CommandResponse } = getHotReloadable().commands
         let fakemsg = Object.create(msg)
         fakemsg.author = user
         let str = command.join(" ")
@@ -17,6 +17,9 @@ export default {
         if (!d) return await msg.reply("Bruh")
         let { command: cmd, args } = d
         let converted = await convertArgs(args, cmd.args, msg.client)
-        await cmd.run(fakemsg, ...converted)
+        let res = await cmd.run(fakemsg, ...converted)
+        if (res instanceof CommandResponse) {
+            if (res.isSendable) res.send(fakemsg)
+        }
     }
 } as Command
