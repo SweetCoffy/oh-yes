@@ -150,6 +150,10 @@ function addCommandToGroup(group: SubcommandGroup, command: Command, defaultComm
     if (defaultCommand) group.default = command
     command._group = group;
 }
+interface CommandError {
+    name: string,
+    message: string
+}
 class CommandResponse {
     isError = false
     hasCooldownOverride?: boolean
@@ -174,12 +178,19 @@ class CommandResponse {
     constructor(...embeds: DiscordEmbed[]) {
         this.embeds = embeds
     }
-    static error(error: Error) {
+    static error(error: CommandError | string, message?: string) {
+        if (typeof error == "string") {
+            if (message == null) throw new Error(`'message' must have a value when 'error' is a string.`)
+            error = { name: error, message }
+        }
         return new CommandResponse(new EmbedBuilder()
             .setTitle(error.name)
             .setDescription(error.message)
             .setColor(Colors.Red))
             .setError(true)
+    }
+    static defaultError(message: string) {
+        return this.error({ name: "Error", message })
     }
 }
 export default {
