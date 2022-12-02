@@ -83,3 +83,9 @@ export function formatNumber(number: number, format: Format<number>[] = formats)
     let d = Math.floor(Math.abs((number % funi.min / funi.min) * 100))
     return `${m}.${d}${funi.suffix}`
 }
+export function percent(n: number) {
+    return Math.floor(n * 100) + "%"
+}
+export function percentBigint(n: bigint, max: bigint) {
+    return (n * 100n) / max + "%"
+}
