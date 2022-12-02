@@ -6,6 +6,7 @@ services:
   ohyes:
     image: "node:19-alpine"
     user: "node"
+    restart: "unless-stopped"
     working_dir: /home/node/app
     environment:
       - NODE_ENV=production
