@@ -1,6 +1,7 @@
 import { EmbedBuilder, User } from "discord.js";
-import { Command } from "../../types";
-import { CurrencyID, format, getUser, moneyFormat, WrappedUserData } from "../../util.js";
+import { Command } from "../../types.js";
+import { format, moneyFormat } from "../../util/formatting.js";
+import { CurrencyID, getUser, WrappedUserData } from "../../util/util.js";
 
 export default {
     name: "compare",

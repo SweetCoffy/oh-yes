@@ -1,7 +1,8 @@
 import { EmbedBuilder, User } from "discord.js";
 import { getHotReloadable } from "../../loader.js";
-import { Command } from "../../types";
-import { allMoneyFormat, eco, format, getMul, itemString, moneyFormat } from "../../util.js";
+import { Command } from "../../types.js";
+import { allMoneyFormat, format, itemString } from "../../util/formatting.js";
+import { eco, getMul } from "../../util/util.js";
 
 export default {
     name: "stonks",

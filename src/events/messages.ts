@@ -1,6 +1,7 @@
-import { Colors, Embed, EmbedBuilder, Message, MessageReaction, User } from "discord.js";
+import { Colors, EmbedBuilder, Message, MessageReaction, User } from "discord.js";
 import { getHotReloadable } from "../loader.js";
-import { eco, getUser, itemString } from "../util.js";
+import { itemString } from "../util/formatting.js";
+import { getUser } from "../util/util.js";
 
 const prefix = ";"
 

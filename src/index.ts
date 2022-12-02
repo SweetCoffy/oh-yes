@@ -1,7 +1,7 @@
 import { Client, IntentsBitField } from "discord.js"
 import { readFileSync } from "fs"
 import { loadAll, loadEvents } from "./loader.js"
-import { eco } from "./util.js"
+import { eco } from "./util/util.js"
 
 const client = new Client({ intents: IntentsBitField.Flags.GuildMessages | IntentsBitField.Flags.MessageContent | IntentsBitField.Flags.Guilds | IntentsBitField.Flags.GuildMessageReactions })
 

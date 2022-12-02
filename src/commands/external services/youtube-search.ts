@@ -1,4 +1,4 @@
-import { Command } from "../../types";
+import { Command } from "../../types.js";
 import { search } from "youtube-search-without-api-key"
 export default {
     name: "youtube-search",

@@ -1,14 +1,11 @@
 import { Client, Collection } from "discord.js"
-import { readdir, readFile } from "fs/promises"
 import { dirname, join } from "path"
 import hotReloadable from "./hot-reloadable"
 import { reloadWorkers } from "./workers.js"
-import { Command, SubcommandGroup } from "./types"
-import { readdirR, resetStuff } from "./util.js"
-import { execSync } from "child_process"
-import { genItems } from "./code-gen.js"
+import { Command, SubcommandGroup } from "./types.js"
+import { readdirR, resetStuff } from "./util/util.js"
 
-const BuildPath = "build"
+const BuildPath = "out"
 export const commands: Collection<string, Command> = new Collection();
 export const categories: Collection<string, Collection<string, Command>> = new Collection();
 export const lookup: Collection<string, string> = new Collection();
@@ -113,7 +110,6 @@ export async function loadAll(client?: Client) {
     } catch (er) {
         console.log(er)
     }
-    genItems()
 
     if (client) {
         let r = await Promise.all(

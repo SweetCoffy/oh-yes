@@ -106,6 +106,6 @@ dist
 # Do not
 .token
 
-build/
+out/
 data/
 content/testing

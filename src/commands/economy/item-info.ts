@@ -1,7 +1,8 @@
 import { Item } from "../../gen-items.js";
 import { getHotReloadable } from "../../loader.js";
 import { ArgType, Command } from "../../types.js";
-import { allMoneyFormat, divideMoneyAll, getUser, itemString, multiplyMoney, rarities } from "../../util.js";
+import { allMoneyFormat, itemString } from "../../util/formatting.js";
+import { getUser, rarities } from "../../util/util.js";
 
 export default {
     name: "item-info",

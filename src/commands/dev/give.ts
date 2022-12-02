@@ -1,5 +1,6 @@
-import { Command } from "../../types";
-import { addItem, getUser, itemString } from "../../util.js";
+import { Command } from "../../types.js";
+import { itemString } from "../../util/formatting.js";
+import { addItem, getUser } from "../../util/util.js";
 
 export default {
     name: "give",

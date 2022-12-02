@@ -1,5 +1,6 @@
 import { Command } from "../../types.js";
-import { eco, moneyFormat } from "../../util.js";
+import { moneyFormat } from "../../util/formatting.js";
+import { eco } from "../../util/util.js";
 
 export default {
     name: "paytaxes",

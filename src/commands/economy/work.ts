@@ -1,6 +1,7 @@
 import { getHotReloadable } from "../../loader.js";
 import { Command, MinTaxProgression } from "../../types.js";
-import { getMul, moneyFormat } from "../../util.js";
+import { moneyFormat } from "../../util/formatting.js";
+import { getMul } from "../../util/util.js";
 
 export default {
     name: "work",

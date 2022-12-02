@@ -1,6 +1,7 @@
 import { EmbedBuilder, Message } from "discord.js";
 import { getHotReloadable } from "../../loader.js";
-import { allMoneyFormat, BooleanEnum, eco, getDiscount, getUpgradeCost, getUser, hasMoney, moneyFormat, moneyLeft, subtractMoney } from "../../util.js";
+import { allMoneyFormat } from "../../util/formatting.js";
+import { BooleanEnum, eco, getDiscount, getUpgradeCost, getUser, hasMoney, moneyLeft, subtractMoney } from "../../util/util.js";
 
 let { subcommandGroup, addCommandToGroup } = getHotReloadable().commands
 

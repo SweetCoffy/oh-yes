@@ -1,7 +1,8 @@
 import { Item } from "../../gen-items.js";
 import { getHotReloadable } from "../../loader.js";
 import { ArgType, Command } from "../../types.js";
-import { addItem, allMoneyFormat, eco, hasMoney, itemString, moneyLeft, multiplyMoney, subtractMoney } from "../../util.js";
+import { itemString, allMoneyFormat } from "../../util/formatting.js";
+import { addItem, eco, hasMoney, moneyLeft, multiplyMoney, subtractMoney } from "../../util/util.js";
 
 export default {
     name: "shop",

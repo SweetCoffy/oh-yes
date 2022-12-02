@@ -1,7 +1,7 @@
 import { createWriteStream } from "fs"
 import { join } from "path"
 import { getHotReloadable, loadAll } from "./loader.js"
-import { enumeration, isProduction } from "./util.js"
+import { enumeration, isProduction } from "./util/util.js"
 
 const SourcePath = `src`
 

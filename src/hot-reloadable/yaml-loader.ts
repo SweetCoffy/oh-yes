@@ -1,10 +1,11 @@
 import { load, DEFAULT_SCHEMA, Schema, Type } from "js-yaml"
 import { readFile, readdir } from "fs/promises"
-import { addFracs, BigIntFraction, eco, rarities, Rarity, readdirR, simplifyFrac } from "../util.js"
+import { eco, Rarity, readdirR } from "../util/util.js"
 import { ItemTypeData } from "./economy.js";
 import { join } from "path";
 import { Progression } from "../types.js";
 import { getHotReloadable } from "../loader.js";
+import { addFracs, BigIntFraction } from "../util/math/fraction.js";
 
 let { items, ItemType } = eco()
 

@@ -1,8 +1,8 @@
-import { Command } from "../../types";
+import { Command } from "../../types.js";
 import { release, totalmem, type } from "os"
 import { EmbedBuilder } from "discord.js";
-import { formatNumber } from "../../util.js";
 import { sizeFormat } from "../../formats.js";
+import { formatNumber } from "../../util/formatting.js";
 
 export default {
     name: "bot-info",

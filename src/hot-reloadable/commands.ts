@@ -1,7 +1,7 @@
 import { commands, lookup } from "../loader.js";
 import { ArgType, Command, CommandArg, SubcommandGroup } from "../types.js";
 import { Client, Collection } from "discord.js"
-import { bigintAbbr, getUser } from "../util.js";
+import { bigintAbbr, getUser } from "../util/util.js";
 
 const Quotes = new Set(["\"", "\'"])
 

@@ -3,7 +3,9 @@ import { existsSync } from "fs";
 import { readFile, writeFile } from "fs/promises";
 import { getData } from "../data.js";
 import { Money, OptionalMoney, PhoneMaxTier, Progression, UserData, VzPriceMul } from "../types.js";
-import { allMoneyFormat, divideMoney, formatNumber, multiplyMoney, format, formatFraction, titleCase, splitCamelCase, xTimes, BigIntFraction, getDiscount, max, enumeration, lcmArray, dataWrapper, WrappedUserData } from "../util.js";
+import { formatFraction, xTimes, titleCase, splitCamelCase, format, allMoneyFormat } from "../util/formatting.js";
+import { BigIntFraction, lcmArray } from "../util/math/fraction.js";
+import { divideMoney, multiplyMoney, getDiscount, dataWrapper, WrappedUserData } from "../util/util.js";
 
 enum Rarity {
     Junk = 0,

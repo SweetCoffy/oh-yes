@@ -1,6 +1,6 @@
 import { Client, Collection, Message, User } from "discord.js"
 import { Item } from "./gen-items.js"
-import { CurrencyID, isItem } from "./util.js"
+import { CurrencyID, isItem } from "./util/util.js"
 
 interface CommandBaseArg {
     name: string,

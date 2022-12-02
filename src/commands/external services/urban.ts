@@ -1,4 +1,4 @@
-import { Command } from "../../types";
+import { Command } from "../../types.js";
 
 interface UDDefinition {
     word: string,

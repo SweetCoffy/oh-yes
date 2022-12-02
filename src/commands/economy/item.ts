@@ -1,7 +1,7 @@
 import { Item } from "../../gen-items.js";
 import { getHotReloadable } from "../../loader.js";
 import { ArgType, Command } from "../../types.js";
-import { addItem, getItem, itemString } from "../../util.js";
+import { itemString } from "../../util/formatting.js";
 
 export default {
     name: "item",
