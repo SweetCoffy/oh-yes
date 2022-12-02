@@ -1,7 +1,8 @@
 import { commands, lookup } from "../loader.js";
 import { ArgType, Command, CommandArg, SubcommandGroup } from "../types.js";
-import { Client, Collection } from "discord.js"
+import { APIEmbed, Client, Collection, Colors, EmbedBuilder, EmbedData, JSONEncodable, Message } from "discord.js"
 import { bigintAbbr, getUser } from "../util/util.js";
+import { DiscordEmbed } from "../util/types.js";
 
 const Quotes = new Set(["\"", "\'"])
 
@@ -149,10 +150,43 @@ function addCommandToGroup(group: SubcommandGroup, command: Command, defaultComm
     if (defaultCommand) group.default = command
     command._group = group;
 }
+class CommandResponse {
+    isError = false
+    hasCooldownOverride?: boolean
+    get hasCooldown() {
+        return this.hasCooldownOverride ?? !this.isError
+    }
+    get isSendable() {
+        return this.embeds.length > 0
+    }
+    embeds: DiscordEmbed[]
+    async send(msg: Message) {
+        return await msg.reply({ embeds: this.embeds })
+    }
+    setError(isError: boolean) {
+        this.isError = isError
+        return this
+    }
+    setHasCooldown(hasCooldown: boolean) {
+        this.hasCooldownOverride = hasCooldown
+        return this
+    }
+    constructor(...embeds: DiscordEmbed[]) {
+        this.embeds = embeds
+    }
+    static error(error: Error) {
+        return new CommandResponse(new EmbedBuilder()
+            .setTitle(error.name)
+            .setDescription(error.message)
+            .setColor(Colors.Red))
+            .setError(true)
+    }
+}
 export default {
     parseCommand,
     lexer,
     convertArgs,
     subcommandGroup,
     addCommandToGroup,
+    CommandResponse,
 }

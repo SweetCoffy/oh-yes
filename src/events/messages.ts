@@ -4,15 +4,14 @@ import { itemString } from "../util/formatting.js";
 import { getUser } from "../util/util.js";
 
 const prefix = ";"
+const hr = getHotReloadable()
+const { parseCommand, convertArgs, CommandResponse } = hr.commands
+const { progressionInfo, getUnlockedItems } = hr.eco
 
 async function handleCommand(msg: Message) {
-    let hr = getHotReloadable()
-    let { parseCommand, convertArgs } = hr.commands
-    let { getUser, progressionInfo, getUnlockedItems } = hr.eco
     let u = await getUser(msg.author)
     if (Date.now() > u.messageCooldown) {
         u.messageCooldown = Date.now() + 10 * 1000
-
     }
     let prevTaxes = u.taxes
     let progress = u.progression
@@ -27,11 +26,18 @@ async function handleCommand(msg: Message) {
         }
     }
     if (cmd.precondition && !(await cmd.precondition(msg))) return
-    u.cooldowns[cmd.name] = Date.now() + (cmd.cooldown ?? 0)
     try {
         let converted = await convertArgs(args, cmd.args, msg.client)
         console.log(converted)
-        await cmd.run(msg, ...converted)
+        let res = await cmd.run(msg, ...converted)
+        let hasCooldown = true
+        if (res instanceof CommandResponse) {
+            hasCooldown = res.hasCooldown
+            if (res.isSendable) {
+                await res.send(msg)
+            }
+        }
+        if (hasCooldown) u.cooldowns[cmd.name] = Date.now() + (cmd.cooldown ?? 0)
         if (u.progression > progress) {
             let unlocks = getUnlockedItems(progress, u.progression)
             let info = progressionInfo[u.progression]
