@@ -14,10 +14,8 @@ export function min(...args: bigint[]) {
     }
     return lowest as bigint;
 }
-export function clamp(x: bigint, min: bigint, max: bigint) {
-    if (x < min) return min;
-    if (x > max) return max;
-    return x
+export function clamp(x: bigint, minValue: bigint, maxValue: bigint) {
+    return min(max(x, minValue), maxValue)
 }
 /**
  * Returns the GCD (Greatest Common Divisor) of `a` and `b`
