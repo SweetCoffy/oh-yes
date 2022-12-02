@@ -150,22 +150,26 @@ function addCommandToGroup(group: SubcommandGroup, command: Command, defaultComm
     if (defaultCommand) group.default = command
     command._group = group;
 }
-interface CommandError {
-    name: string,
+interface CommandResponseInfo {
+    name?: string,
     message: string
 }
-class CommandResponse {
+class CommandResponse implements CommandResponseInfo {
     isError = false
     hasCooldownOverride?: boolean
     get hasCooldown() {
         return this.hasCooldownOverride ?? !this.isError
     }
     get isSendable() {
-        return this.embeds.length > 0
+        return true
     }
-    embeds: DiscordEmbed[]
+    name?: string
+    message: string
     async send(msg: Message) {
-        return await msg.reply({ embeds: this.embeds })
+        let embed = new EmbedBuilder()
+        embed.setDescription(this.message)
+        if (this.name != null) embed.setTitle(this.name)
+        return await msg.reply({ embeds: [embed] })
     }
     setError(isError: boolean) {
         this.isError = isError
@@ -175,22 +179,15 @@ class CommandResponse {
         this.hasCooldownOverride = hasCooldown
         return this
     }
-    constructor(...embeds: DiscordEmbed[]) {
-        this.embeds = embeds
+    constructor(info: CommandResponseInfo) {
+        this.name = info.name
+        this.message = info.message
     }
-    static error(error: CommandError | string, message?: string) {
-        if (typeof error == "string") {
-            if (message == null) throw new Error(`'message' must have a value when 'error' is a string.`)
-            error = { name: error, message }
-        }
-        return new CommandResponse(new EmbedBuilder()
-            .setTitle(error.name)
-            .setDescription(error.message)
-            .setColor(Colors.Red))
-            .setError(true)
+    static error(info: CommandResponseInfo) {
+        return new CommandResponse(info).setError(true)
     }
-    static defaultError(message: string) {
-        return this.error({ name: "Error", message })
+    static generic(info: CommandResponseInfo) {
+        return new CommandResponse(info)
     }
 }
 export default {
