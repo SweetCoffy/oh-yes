@@ -1,8 +1,8 @@
 import { commands, lookup } from "../loader.js";
 import { ArgType, Command, CommandArg, SubcommandGroup } from "../types.js";
-import { APIEmbed, Client, Collection, Colors, EmbedBuilder, EmbedData, JSONEncodable, Message } from "discord.js"
+import { APIEmbed, Client, Collection, ColorResolvable, Colors, EmbedBuilder, EmbedData, JSONEncodable, Message } from "discord.js"
 import { bigintAbbr, getUser } from "../util/util.js";
-import { DiscordEmbed } from "../util/types.js";
+import { DiscordEmbed, Mapping } from "../util/types.js";
 
 const Quotes = new Set(["\"", "\'"])
 
@@ -154,25 +154,39 @@ interface CommandResponseInfo {
     name?: string,
     message: string
 }
+enum ResponseType {
+    Info = 0,
+    Warning = 1,
+    Error = 2,
+    Failure = 2,
+    Success = 3,
+}
 class CommandResponse implements CommandResponseInfo {
-    isError = false
+    type = ResponseType.Info
     hasCooldownOverride?: boolean
     get hasCooldown() {
-        return this.hasCooldownOverride ?? !this.isError
+        return this.hasCooldownOverride ?? this.type == ResponseType.Error
     }
     get isSendable() {
         return true
     }
     name?: string
     message: string
+    static colors: Mapping<ResponseType, ColorResolvable> = {
+        [ResponseType.Info]: Colors.Aqua,
+        [ResponseType.Warning]: Colors.Yellow,
+        [ResponseType.Error]: Colors.Red,
+        [ResponseType.Success]: Colors.Green,
+    }
     async send(msg: Message) {
         let embed = new EmbedBuilder()
-        embed.setDescription(this.message)
+            .setDescription(this.message)
+            .setColor(CommandResponse.colors[this.type])
         if (this.name != null) embed.setTitle(this.name)
         return await msg.reply({ embeds: [embed] })
     }
-    setError(isError: boolean) {
-        this.isError = isError
+    setType(type: ResponseType) {
+        this.type = type
         return this
     }
     setHasCooldown(hasCooldown: boolean) {
@@ -184,10 +198,13 @@ class CommandResponse implements CommandResponseInfo {
         this.message = info.message
     }
     static error(info: CommandResponseInfo) {
-        return new CommandResponse(info).setError(true)
+        return new CommandResponse(info).setType(ResponseType.Error)
     }
     static generic(info: CommandResponseInfo) {
-        return new CommandResponse(info)
+        return new CommandResponse(info).setType(ResponseType.Info)
+    }
+    static success(info: CommandResponseInfo) {
+        return new CommandResponse(info).setType(ResponseType.Success)
     }
 }
 export default {
