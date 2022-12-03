@@ -18,8 +18,8 @@ export default {
         let target = await getUser(victim)
         // Robbing from more wealthy users is encouraged by increasing success rate.
         // Robbing from less wealthy users is discouraged.
-        let modifier = Number((target.money[currency] * 50n) / u.money[currency] / (target.money[currency] < u.money[currency] ? 2n : 1n)) / 100
-        let chance = baseChance * modifier
+        let bonus = Number((target.money[currency] * 50n) / u.money[currency]) / 100
+        let chance = baseChance * (1 + bonus)
         if (chance <= 0) {
             return CommandResponse.error({ message: "Don't even try." })
         }
