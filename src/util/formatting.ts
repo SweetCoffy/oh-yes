@@ -89,3 +89,10 @@ export function percent(n: number) {
 export function percentBigint(n: bigint, max: bigint) {
     return (n * 100n) / max + "%"
 }
+export function formatTime(seconds: number) {
+    let cs = Math.floor(seconds % 1 * 100)
+    let s = Math.floor(seconds % 60)
+    let m = Math.floor(seconds / 60) % 60
+    let h = Math.floor(seconds / 60 / 60)
+    return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}.${cs.toString().padStart(2, "0")}`
+}
