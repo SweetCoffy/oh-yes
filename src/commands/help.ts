@@ -1,7 +1,7 @@
 import { categories, commands, getHotReloadable, lookup } from "../loader.js";
 import { ArgType, Command, SubcommandGroup } from "../types.js";
 
-const { CommandResponse } = getHotReloadable().commands
+const { CommandResponse } = cmd
 
 export default {
     name: "help",

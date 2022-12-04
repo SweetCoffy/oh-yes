@@ -63,7 +63,7 @@ export function allMoneyFormat(m: OptionalMoney) {
     return Object.keys(m).filter((v) => v && m[v as CurrencyID]).map(el => moneyFormat(m[el as CurrencyID], el as CurrencyID)).join(" • ")
 }
 export function itemString(item: string, amount?: bigint, iconOnly?: boolean) {
-    let { items } = getHotReloadable().eco
+    let { items } = eco
     let info = items.get(item)
     if (info) {
         if (typeof amount == "bigint" && amount != 1n)

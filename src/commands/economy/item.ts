@@ -9,7 +9,7 @@ export default {
     description: "Uses an item. If no arguments are passed, lists your items instead",
     args: [{ type: ArgType.ItemType, name: "item", required: false }, { type: "bigint", name: "amount", required: false }],
     async run(msg, item?: Item, amount?: bigint) {
-        let { getUser, items } = getHotReloadable().eco
+        let { getUser, items } = eco
         let u = await getUser(msg.author)
         if (!item) {
             let amounts = u.items

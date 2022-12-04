@@ -4,7 +4,7 @@ import { Command } from "../../types.js";
 import { moneyFormat, percent } from "../../util/formatting.js";
 import { min } from "../../util/math/bigint.js";
 import { Currency, CurrencyID, getUser } from "../../util/util.js";
-const { CommandResponse } = getHotReloadable().commands
+const { CommandResponse } = cmd
 
 export default {
     name: "rob",

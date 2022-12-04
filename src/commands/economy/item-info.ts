@@ -9,7 +9,7 @@ export default {
     description: "b",
     args: [{ type: ArgType.ItemType, name: "item", required: true }],
     async run(msg, item: Item) {
-        let { items, ItemAttributeType } = getHotReloadable().eco
+        let { items, ItemAttributeType } = eco
         let u = await getUser(msg.author);
         let it = items.get(item)
         if (!it) return await msg.reply("No.")

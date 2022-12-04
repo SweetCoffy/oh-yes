@@ -17,7 +17,7 @@ export default {
         required: false,
     }],
     async run(msg, item?: Item, amount?: bigint) {
-        let { items, getUser, getPrice, itemAvailable } = getHotReloadable().eco
+        let { items, getUser, getPrice, itemAvailable } = eco
         let u = await getUser(msg.author)
         if (!item) {
             await msg.reply({

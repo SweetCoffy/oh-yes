@@ -10,7 +10,7 @@ export default {
     description: "...",
     cooldown: 1000 * 30,
     async run(msg) {
-        let { getUser } = getHotReloadable().eco
+        let { getUser } = eco
         let u = await getUser(msg.author)
         let mul = getMul(u)
         if (u.items.trophy) mul *= 2n

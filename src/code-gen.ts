@@ -7,7 +7,7 @@ const SourcePath = `src`
 
 export function genItems() {
     if (isProduction()) return
-    let { items } = getHotReloadable().eco
+    let { items } = eco
 
     let s = createWriteStream(join(SourcePath, "gen-items.ts"), { encoding: "utf8" })
     s.write(`export enum Item {\n`)

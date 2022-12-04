@@ -108,10 +108,10 @@ export function resetStuff() {
     Rarity = eco.Rarity
 }
 /**
- * Easier of calling `getHotReloadable().eco.getUser`
+ * Easier of calling `eco.getUser`
  */
 export function getUser(user: User) {
-    return getHotReloadable().eco.getUser(user)
+    return eco.getUser(user)
 }
 let numberRegex = /^(\d+)(.\d+)?([a-zA-Z]*)/
 export function bigintAbbr(str: string): bigint | null {

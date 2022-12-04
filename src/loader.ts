@@ -24,7 +24,7 @@ export async function loadFiles(...files: string[]): Promise<unknown[]> {
 
 export async function loadCommands(client: Client, ...files: string[]) {
     let cmds = await loadFiles(...files.map(el => join("commands", el))) as Command[]
-    let { addCommandToGroup } = getHotReloadable().commands
+    let { addCommandToGroup } = cmd
     commands.clear()
     lookup.clear()
     categories.clear()
@@ -36,7 +36,7 @@ export async function loadCommands(client: Client, ...files: string[]) {
         args: [{ type: "string", name: "...flags", required: true }],
         async run(msg, flags: string[] = []) {
             console.time("Reload")
-            let { saveAllUsers } = getHotReloadable().eco
+            let { saveAllUsers } = eco
             let m = await msg.reply("Getting real...")
             await saveAllUsers()
             await loadAll(msg.client);

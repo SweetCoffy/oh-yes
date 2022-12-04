@@ -3,7 +3,7 @@ import { getHotReloadable } from "../../loader.js";
 import { allMoneyFormat } from "../../util/formatting.js";
 import { BooleanEnum, getDiscount, getUpgradeCost, getUser, hasMoney, moneyLeft, subtractMoney } from "../../util/util.js";
 
-let { subcommandGroup, addCommandToGroup } = getHotReloadable().commands
+let { subcommandGroup, addCommandToGroup } = cmd
 
 let group = subcommandGroup("phone")
 group.precondition = async (msg: Message, ...args: any[]) => {
