@@ -151,8 +151,8 @@ function addCommandToGroup(group: SubcommandGroup, command: Command, defaultComm
     command._group = group;
 }
 interface CommandResponseInfo {
-    name?: string,
-    message: string
+    readonly name?: string,
+    readonly message: string
 }
 enum ResponseType {
     Info = 0,
@@ -167,11 +167,14 @@ class CommandResponse implements CommandResponseInfo {
     get hasCooldown() {
         return this.hasCooldownOverride ?? this.type == ResponseType.Error
     }
-    get isSendable() {
-        return true
+    isSendable: boolean = false
+    info: CommandResponseInfo = { message: "e" }
+    get message() {
+        return this.info.message
     }
-    name?: string
-    message: string
+    get name() {
+        return this.info.name
+    }
     static colors: Mapping<ResponseType, ColorResolvable> = {
         [ResponseType.Info]: Colors.Aqua,
         [ResponseType.Warning]: Colors.Yellow,
@@ -179,10 +182,11 @@ class CommandResponse implements CommandResponseInfo {
         [ResponseType.Success]: Colors.Green,
     }
     async send(msg: Message) {
+        if (!this.isSendable) throw new Error(`Cannot send a non-sendable response.`)
         let embed = new EmbedBuilder()
-            .setDescription(this.message)
+            .setDescription(this.info.message)
             .setColor(CommandResponse.colors[this.type])
-        if (this.name != null) embed.setTitle(this.name)
+        if (this.info.name != null) embed.setTitle(this.info.name)
         return await msg.reply({ embeds: [embed] })
     }
     setType(type: ResponseType) {
@@ -193,17 +197,18 @@ class CommandResponse implements CommandResponseInfo {
         this.hasCooldownOverride = hasCooldown
         return this
     }
-    constructor(info: CommandResponseInfo) {
-        this.name = info.name
-        this.message = info.message
+    constructor(info?: CommandResponseInfo) {
+        if (!info) return
+        this.info = info
+        this.isSendable = true
     }
-    static error(info: CommandResponseInfo) {
+    static error(info?: CommandResponseInfo) {
         return new CommandResponse(info).setType(ResponseType.Error)
     }
-    static generic(info: CommandResponseInfo) {
+    static generic(info?: CommandResponseInfo) {
         return new CommandResponse(info).setType(ResponseType.Info)
     }
-    static success(info: CommandResponseInfo) {
+    static success(info?: CommandResponseInfo) {
         return new CommandResponse(info).setType(ResponseType.Success)
     }
 }
