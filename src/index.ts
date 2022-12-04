@@ -1,7 +1,6 @@
 import { Client, IntentsBitField } from "discord.js"
 import { readFileSync } from "fs"
 import { loadAll, loadEvents } from "./loader.js"
-import { eco } from "./util/util.js"
 
 const client = new Client({ intents: IntentsBitField.Flags.GuildMessages | IntentsBitField.Flags.MessageContent | IntentsBitField.Flags.Guilds | IntentsBitField.Flags.GuildMessageReactions })
 const AutosaveInterval = 1000 * 32
@@ -21,8 +20,8 @@ process.on("unhandledRejection", (reason) => {
     console.log(reason)
 })
 process.on("beforeExit", async () => {
-    await eco().saveAllUsers()
+    await eco.saveAllUsers()
 })
 setInterval(() => {
-    eco().saveAllUsers()
+    eco.saveAllUsers()
 }, AutosaveInterval)

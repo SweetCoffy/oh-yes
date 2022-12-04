@@ -1,7 +1,7 @@
 import { EmbedBuilder, Message } from "discord.js";
 import { getHotReloadable } from "../../loader.js";
 import { allMoneyFormat } from "../../util/formatting.js";
-import { BooleanEnum, eco, getDiscount, getUpgradeCost, getUser, hasMoney, moneyLeft, subtractMoney } from "../../util/util.js";
+import { BooleanEnum, getDiscount, getUpgradeCost, getUser, hasMoney, moneyLeft, subtractMoney } from "../../util/util.js";
 
 let { subcommandGroup, addCommandToGroup } = getHotReloadable().commands
 
@@ -21,7 +21,7 @@ addCommandToGroup(group, {
     async run(msg) {
         let u = await getUser(msg.author)
         let phone = u.phone
-        let maxTier = eco().progressionInfo[u.progression].maxPhoneTier
+        let maxTier = eco.progressionInfo[u.progression].maxPhoneTier
         let embed = new EmbedBuilder()
             .setTitle(`Phone`)
             .addFields({ name: "Tier", value: `${phone.tier}/${maxTier} (${getDiscount(phone.tier)}% Discount)`, inline: true })
@@ -36,7 +36,7 @@ addCommandToGroup(group, {
         let phone = u.phone
         let cost = { points: getUpgradeCost(phone.tier), gold: getUpgradeCost(phone.tier) / 10n }
         let newDiscount = getDiscount(phone.tier + 1n)
-        let maxTier = eco().progressionInfo[u.progression].maxPhoneTier
+        let maxTier = eco.progressionInfo[u.progression].maxPhoneTier
         if (phone.tier >= maxTier) return await msg.reply(`You have already reached the maximum tier.`)
         if (!noConfirm) {
             let embed = new EmbedBuilder()

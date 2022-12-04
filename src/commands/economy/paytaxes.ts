@@ -1,12 +1,11 @@
 import { Command } from "../../types.js";
 import { moneyFormat } from "../../util/formatting.js";
-import { eco } from "../../util/util.js";
 
 export default {
     name: "paytaxes",
     description: "Pay your taxes.",
     async run(msg) {
-        const { getUser } = eco()
+        const { getUser } = eco
         let u = await getUser(msg.author)
         if (u.taxes <= 0n) return await msg.reply(`You don't have any taxes to pay`)
         if (u.money.points < u.taxes) return await msg.reply(`No money?`)

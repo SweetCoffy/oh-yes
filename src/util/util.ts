@@ -104,21 +104,14 @@ export function bar(num: number, max: number, width: number = 25) {
 export let rarities: typeof hotReloadable.eco.rarities = []
 export let Rarity: typeof hotReloadable.eco.Rarity
 export function resetStuff() {
-    let e = eco()
-    rarities = e.rarities
-    Rarity = e.Rarity
+    rarities = eco.rarities
+    Rarity = eco.Rarity
 }
 /**
  * Easier of calling `getHotReloadable().eco.getUser`
  */
 export function getUser(user: User) {
     return getHotReloadable().eco.getUser(user)
-}
-/**
- * Easier way of doing `getHotReloadable().eco`
- */
-export function eco(): typeof hotReloadable.eco {
-    return getHotReloadable().eco
 }
 let numberRegex = /^(\d+)(.\d+)?([a-zA-Z]*)/
 export function bigintAbbr(str: string): bigint | null {
@@ -207,7 +200,7 @@ export function dataWrapper(data: UserData): WrappedUserData {
     }) as any
 }
 export function isItem(id: string): id is Item {
-    if (eco().items.has(id)) return true
+    if (eco.items.has(id)) return true
     return false
 }
 export function isProduction() {

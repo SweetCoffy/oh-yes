@@ -97,10 +97,12 @@ export async function loadAll(client?: Client) {
     globalThis.hotReloadable = hr
     if ("loadfiles" in hr) {
         for (let lf of hr.loadfiles) {
-            //console.log(data[i])
-            //console.log(hr.loadfiles[i])
             //@ts-ignore
             hr[lf.name] = await loadFile(lf.file)
+            if (lf.globalName) {
+                //@ts-ignore
+                globalThis[lf.globalName] = hr[lf.name]
+            }
         }
     }
     resetStuff()

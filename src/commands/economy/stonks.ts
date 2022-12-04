@@ -2,7 +2,7 @@ import { EmbedBuilder, User } from "discord.js";
 import { getHotReloadable } from "../../loader.js";
 import { Command } from "../../types.js";
 import { allMoneyFormat, format, itemString } from "../../util/formatting.js";
-import { eco, getMul } from "../../util/util.js";
+import { getMul } from "../../util/util.js";
 
 export default {
     name: "stonks",
@@ -10,7 +10,7 @@ export default {
     aliases: ["stats", "profile", "bal"],
     args: [{ type: "user", errorIfMissing: false, required: false, name: "user" }],
     async run(msg, user: User) {
-        let { getUser } = getHotReloadable().eco
+        let { getUser } = eco
         let u = user || msg.author
         let data = await getUser(u)
         await msg.reply({
@@ -21,7 +21,7 @@ export default {
                         `Mone: ${allMoneyFormat(data.money)}
 Multiplier: ${data.multipliers.join(" * ")} (${format(getMul(data))})
 Work bonus: +${format(data.workBonus)}
-${Object.keys(data.items).filter(v => data.items[v]).filter(v => eco().items.get(v)?.category == "utility").map(el => itemString(el, undefined, true)).join(" ")}
+${Object.keys(data.items).filter(v => data.items[v]).filter(v => eco.items.get(v)?.category == "utility").map(el => itemString(el, undefined, true)).join(" ")}
 `)]
         })
     }

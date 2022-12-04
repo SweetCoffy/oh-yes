@@ -9,8 +9,8 @@ export default {
     yamlLoader: {} as typeof yamlLoader,
     yamlFuncs: {} as typeof yamlFuncs,
     loadfiles: [
-        { file: "hot-reloadable/commands.js", name: "commands" },
-        { file: "hot-reloadable/economy.js", name: "eco" },
+        { globalName: "cmd", file: "hot-reloadable/commands.js", name: "commands" },
+        { globalName: "eco", file: "hot-reloadable/economy.js", name: "eco" },
         { file: "hot-reloadable/yaml-funcs.js", name: "yamlFuncs" },
         { file: "hot-reloadable/yaml-loader.js", name: "yamlLoader" },
     ]

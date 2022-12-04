@@ -1,8 +1,7 @@
 import { Progression, UserData } from "../types.js";
 import { BigIntFraction, getFracValue } from "../util/math/fraction.js";
-import { eco } from "../util/util.js";
 import { ItemType } from "./economy.js";
-let { addMul } = eco()
+let { addMul } = eco
 
 export default {
     item: {
