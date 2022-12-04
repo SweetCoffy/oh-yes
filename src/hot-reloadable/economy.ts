@@ -253,7 +253,7 @@ async function getUser(user: User): Promise<WrappedUserData> {
     users.set(user.id, wrapper)
     return wrapper
 }
-async function saveUser(id: string | User): Promise<void> {
+async function saveUser(id: string | User, unload = true): Promise<void> {
     if (id instanceof User) id = id.id;
     let data = users.get(id)
     if (!data) return
@@ -262,10 +262,10 @@ async function saveUser(id: string | User): Promise<void> {
         return v
     }))
     console.log(`Saved user '${id}'`)
-    users.delete(id)
+    if (unload) users.delete(id)
 }
-async function saveAllUsers() {
-    await Promise.all(users.map((v, k) => saveUser(k)))
+async function saveAllUsers(unload = true) {
+    await Promise.all(users.map((v, k) => saveUser(k, unload)))
 }
 /**
  * Determines the price of `item` for the user. Taking into account Venezuela Mode and other factors.

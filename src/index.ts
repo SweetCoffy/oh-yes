@@ -4,6 +4,7 @@ import { loadAll, loadEvents } from "./loader.js"
 import { eco } from "./util/util.js"
 
 const client = new Client({ intents: IntentsBitField.Flags.GuildMessages | IntentsBitField.Flags.MessageContent | IntentsBitField.Flags.Guilds | IntentsBitField.Flags.GuildMessageReactions })
+const AutosaveInterval = 1000 * 32
 
 console.time("Loading stuff")
 await loadAll(client)
@@ -22,3 +23,6 @@ process.on("unhandledRejection", (reason) => {
 process.on("beforeExit", async () => {
     await eco().saveAllUsers()
 })
+setInterval(() => {
+    eco().saveAllUsers()
+}, AutosaveInterval)
