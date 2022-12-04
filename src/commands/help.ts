@@ -1,5 +1,7 @@
-import { categories, commands, lookup } from "../loader.js";
+import { categories, commands, getHotReloadable, lookup } from "../loader.js";
 import { ArgType, Command, SubcommandGroup } from "../types.js";
+
+const { CommandResponse } = getHotReloadable().commands
 
 export default {
     name: "help",
@@ -20,7 +22,7 @@ export default {
                 c = group.commands
                 lu = group._lookup
             }
-            if (!cmd) return await msg.reply("Unknown command.")
+            if (!cmd) return CommandResponse.error({ message: `Unknown command.` })
             await msg.reply({
                 embeds: [{
                     title: `${cmd.name}`,

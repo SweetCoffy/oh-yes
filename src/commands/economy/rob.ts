@@ -16,10 +16,13 @@ export default {
         const baseChance = 0.3
         let u = await getUser(msg.author)
         let target = await getUser(victim)
+        function calcBonus(a: bigint, b: bigint) {
+            return Number((b * 25n) / a) / 100
+        }
         // Robbing from more wealthy users is encouraged by increasing success rate.
         // Robbing from less wealthy users is discouraged.
-        let bonus = Number((target.money[currency] * 50n) / u.money[currency]) / 100
-        let chance = baseChance * (1 + bonus)
+        let bonus = calcBonus(u.money[currency], target.money[currency])
+        let chance = baseChance * (1 + Math.log2(bonus))
         if (chance <= 0) {
             return CommandResponse.error({ message: "Don't even try." })
         }
@@ -27,10 +30,10 @@ export default {
         if (Math.random() > chance) {
             let lost = min(amount / 2n, u.money[currency] / 2n)
             u.money[currency] -= lost
-            return CommandResponse.error({ message: `You got caught and were charged ${moneyFormat(lost, currency)}.` })
+            return CommandResponse.error({ message: `You got caught and were charged ${moneyFormat(lost, currency)}. (${percent(chance)} success rate)` })
         }
         u.money[currency] += amount
         target.money[currency] -= amount
-        return CommandResponse.success({ message: `Successfully stole ${moneyFormat(amount, currency)}.` })
+        return CommandResponse.success({ message: `Successfully stole ${moneyFormat(amount, currency)}. (${percent(chance)}) success rate` })
     },
 } as Command
