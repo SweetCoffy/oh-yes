@@ -14,7 +14,7 @@ export default {
         fakemsg.author = user
         let str = commandName.join(" ")
         let d = parseCommand(str)
-        if (!d) return await msg.reply("Bruh")
+        if (!d) return CommandResponse.error({ message: `Invalid command or arguments.` })
         let { command, args } = d
         let converted = await convertArgs(args, command.args, msg.client)
         let res = await command.run(fakemsg, ...converted)

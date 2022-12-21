@@ -16,9 +16,9 @@ async function handleCommand(msg: Message) {
     let prevTaxes = u.taxes
     let progress = u.progression
     let d = parseCommand(msg.content.slice(prefix.length), u.aliases)
-    if (!d) return msg.reply(`Bruh`)
+    if (!d) return await CommandResponse.error({ message: `Invalid command or arguments.` }).send(msg)
     let { command: cmd, args } = d
-    if (cmd.devOnly && msg.author.id != "602651056320675840") return await msg.reply("Bruh")
+    if (cmd.devOnly && msg.author.id != "602651056320675840") return await CommandResponse.error({ message: `This command is developer only.` }).send(msg)
     if (cmd.name in u.cooldowns && cmd.cooldown) {
         if (Date.now() < (u.cooldowns[cmd.name] ?? 0)) {
             let time = Math.ceil(((u.cooldowns[cmd.name] ?? 0) - Date.now()) / 1000)
