@@ -179,7 +179,7 @@ class UserDataWrapper {
         return this.has(Item.Phone)
     }
 }
-export function dataWrapper(data: UserData): WrappedUserData {
+export function wrapUserData(data: UserData): WrappedUserData {
     let w = new UserDataWrapper(data)
     return new Proxy(w, {
         get(target, p, receiver) {

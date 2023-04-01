@@ -5,7 +5,7 @@ import { getData } from "../data.js";
 import { Money, OptionalMoney, PhoneMaxTier, Progression, UserData, VzPriceMul } from "../types.js";
 import { formatFraction, xTimes, titleCase, splitCamelCase, format, allMoneyFormat } from "../util/formatting.js";
 import { BigIntFraction, lcmArray } from "../util/math/fraction.js";
-import { divideMoney, multiplyMoney, getDiscount, dataWrapper, WrappedUserData } from "../util/util.js";
+import { divideMoney, multiplyMoney, getDiscount, wrapUserData, WrappedUserData } from "../util/util.js";
 
 enum Rarity {
     Junk = 0,
@@ -249,7 +249,7 @@ async function getUser(user: User): Promise<WrappedUserData> {
             ...(o?.cooldowns || {})
         }
     }
-    let wrapper = dataWrapper(obj)
+    let wrapper = wrapUserData(obj)
     users.set(user.id, wrapper)
     return wrapper
 }
