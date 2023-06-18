@@ -44,7 +44,7 @@ export function format(number: bigint, format: Format[] = formatsBigint) {
     }
     if (!funi) return `${number}`
     let m = number / funi.min
-    let d = abs((number % funi.min) / (funi.min / 100n))
+    let d = funi.min < 100n ? 0n : abs((number % funi.min) / (funi.min / 100n))
     function yes(num: bigint) {
         let str = num.toString()
         let a = str.slice(0, 2)
